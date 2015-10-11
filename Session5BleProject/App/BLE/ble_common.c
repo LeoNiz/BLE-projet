@@ -14,7 +14,6 @@ do {\
 #define STORE_LE_16(buf, val)    ( ((buf)[0] =  (uint8_t) (val)    ) , \
                                    ((buf)[1] =  (uint8_t) (val>>8) ) )
 
-
 /* Private variables ---------------------------------------------------------*/
 volatile int connected = FALSE;
 volatile uint8_t set_connectable = 1;
@@ -148,22 +147,16 @@ void GAP_DisconnectionComplete_CB(void)
 	DEBUG_LINE("BLE Disconnected\n");
 }
 
-/**
- * @brief  Read request callback.
- * @param  uint16_t Handle of the attribute
- * @retval None
- */
 void Read_Request_CB(uint16_t handle)
 {
 	//This Callback is called when a GATT Client wants to read an attribute
-
 	if (connection_handle != 0)
 		aci_gatt_allow_read(connection_handle);
 }
 
-void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data)
+void Write_Request_CB(uint16_t handle, uint8_t *data, uint16_t length)
 {
-	//This Callback is called when a GATT Client has modified an attribute
+	//This Callback is called when a GATT Client wants to write an attribute
 }
 
 /**
@@ -212,20 +205,17 @@ void HCI_Event_CB(void *pckt)
 		evt_blue_aci *blue_evt = (void*) event_pckt->data;
 		switch (blue_evt->ecode)
 		{
-		case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
-		{
-			/* this callback is invoked when a GATT attribute is modified
-			 extract callback data and pass to suitable handler function */
-			evt_gatt_attr_modified *evt = (evt_gatt_attr_modified*)blue_evt->data;
-
-			Attribute_Modified_CB(evt->attr_handle, evt->data_length, evt->att_data);
-		}
-		break;
-
 		case EVT_BLUE_GATT_READ_PERMIT_REQ:
 		{
 			evt_gatt_read_permit_req *pr = (void*) blue_evt->data;
 			Read_Request_CB(pr->attr_handle);
+		}
+			break;
+
+		case EVT_BLUE_GATT_WRITE_PERMIT_REQ:
+		{
+			evt_gatt_write_permit_req *pr = (void*) blue_evt->data;
+			Write_Request_CB(pr->attr_handle, pr->data, pr->data_length);
 		}
 			break;
 		}
