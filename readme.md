@@ -19,6 +19,7 @@ An empty APP/ELE410Prototype module is already present and contains almost empty
 You should have a look at what was presented in session2, exercice3, how the solution was implemented, and inspire yourself to correctly implement this session's exercice. 
 
 -> Most of the code you'll need write for this exercice should be in these 2 files (ele410_prototype.h and ele410_prototype.c).
+
 -> you'll have to implement the BLE logic (services/characteristics declarations + management) in the BLE ()ble_common.c/ble_common.h or create your own files if needed; it could be more elegant). 
 
 To control your development, you're invited to use tools such as :
