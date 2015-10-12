@@ -8,13 +8,32 @@
 #include "motion.h"
 #include "debug.h"
 #include "stm32f4xx_nucleo.h"
+#include "mems.h"
 
 void Motion_Init(void) {
-
+	Mems_StartReadSensors(10, ACCELEROMETER_SENSOR);
 }
 
 void Motion_Process(void) {
 
+}
+
+void Mems_Acc_CB(int32_t acc_x, int32_t acc_y, int32_t acc_z) {
+	int angle30 = 1000/3;
+	int angle60 = 1000/3*2;
+	int dec = 100;
+	/*Inclinaison gauche/droite*/
+	if(fabs(acc_x)<dec) Motion_InclinationLeftRightAxisNone_CB();
+	if (fabs(acc_x-angle30)<dec) Motion_InclinationLeftRightAxisLeftMedium_CB();
+	if (fabs(acc_x-angle60)<dec) Motion_InclinationLeftRightAxisLeftHigh_CB();
+	if (fabs(acc_x+angle30)<dec) Motion_InclinationLeftRightAxisRightMedium_CB();
+	if (fabs(acc_x+angle60)<dec) Motion_InclinationLeftRightAxisRightHigh_CB();
+	/*Inclinaison avant/arrière*/
+	if (fabs(acc_y)<dec) Motion_InclinationBackFrontAxisNone_CB();
+	if (fabs(acc_y-angle30)<dec) Motion_InclinationBackFrontAxisBackMedium_CB();
+	if (fabs(acc_y-angle60)<dec) Motion_InclinationBackFrontAxisBackHigh_CB();
+	if (fabs(acc_y+angle30)<dec) Motion_InclinationBackFrontAxisFrontMedium_CB();
+	if (fabs(acc_y+angle60)<dec) Motion_InclinationBackFrontAxisFrontHigh_CB();
 }
 
 __weak void Motion_InclinationLeftRightAxisNone_CB(void) {
