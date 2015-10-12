@@ -21,14 +21,14 @@ volatile uint16_t connection_handle = 0;
 
 void BLE_Common_Init(void)
 {
-	const char *name = "BlueNRG";
+	const char *name = "Team2";
 	//This avoid to clear the cache on some Android device
 #ifdef BLUENRG_MS
 	uint8_t SERVER_BDADDR[] =
 	{	0x12, 0x34, 0x00, 0xE1, 0x80, 0x02};
 #else
 	uint8_t SERVER_BDADDR[] =
-	{ 0x12, 0x34, 0x00, 0xE1, 0xf0, 0x03 };
+	{ 0xCC, 0x45, 0x4C, 0x45, 0x00, 0x02 };
 #endif
 	uint8_t bdaddr[BDADDR_SIZE];
 	uint16_t service_handle, dev_name_char_handle, appearance_char_handle;
@@ -104,7 +104,7 @@ void BLE_Common_Set_Discoverable(void)
 	tBleStatus ret;
 
 	const char local_name[] =
-	{ AD_TYPE_COMPLETE_LOCAL_NAME, 'B', 'l', 'u', 'e', 'N', 'R', 'G' };
+	{ AD_TYPE_COMPLETE_LOCAL_NAME, 'e', 'l', 'e', '4', '1', '0', '_','t','e','a','m','2' };
 
 	/* disable scan response */
 	hci_le_set_scan_resp_data(0, NULL);
