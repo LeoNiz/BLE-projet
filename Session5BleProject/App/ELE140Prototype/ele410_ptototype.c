@@ -2,32 +2,37 @@
 #include "link_layer.h"
 #include "gp_timer.h"
 #include "debug.h"
+#include "ble_common.h"
 
 static tClockTime time;
+static bleActive;
+static int connect;
+const DELAY = 10000;
 
 void ELE410_Prototype_Init(void)
 {
-
+	bleActive = 0;
+	connect = 0;
 }
 
 void ELE410_Prototype_Process(void)
 {
-
+	Disable_BLE();
 }
 
 void Button_Button_Long_Pressed_CB(void)
 {
-
+	connect = 0;
+	bleActive = 1;
+	time = Clock_Time();
+	/*Lance le discoverable mode*/
 	BLE_Common_Set_Discoverable();
-	gp_timer_t timer;
-		//Timer_Set(&timer,interval);
-		tClockTime interval = 10000;
-		int delay = (int) (Clock_Time()-time);
-	DEBUG_LINE("reste : %d",(int)delay);
-	//if(delay>interval)
-		DEBUG_LINE("reste : %d",(int)delay);
-		//aci_gap_set_undirected_connectable(PUBLIC_ADDR,ADV_IND);
-		//aci_gap_set_undirected_connectable(NO_WHITE_LIST_USE ,PUBLIC_ADDR);
-		aci_gap_set_undirected_connectable(0x03,0x00);
+}
 
+void Disable_BLE(void)
+{
+	if(bleActive==1 && connect==0 && Clock_Time()-time>DELAY){
+			bleActive=0;
+			BLE_Common_Init();
+		}
 }
