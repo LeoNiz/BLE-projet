@@ -6,13 +6,12 @@
 
 static tClockTime time;
 static bleActive;
-static int connect;
-const DELAY = 10000;
+const DELAY = 120000;
 
 void ELE410_Prototype_Init(void)
 {
-	bleActive = 0;
-	connect = 0;
+	/*Initialement le BLE n'est pas actif*/
+	bleActive=0;
 }
 
 void ELE410_Prototype_Process(void)
@@ -22,17 +21,22 @@ void ELE410_Prototype_Process(void)
 
 void Button_Button_Long_Pressed_CB(void)
 {
-	connect = 0;
-	bleActive = 1;
 	time = Clock_Time();
 	/*Lance le discoverable mode*/
 	BLE_Common_Set_Discoverable();
+	/*BLE maintenant actif*/
+	bleActive = 1;
+	DEBUG_LINE("VOUS AVEZ %d s POUR VOUS CONNECTER", (int) DELAY/1000);
 }
 
 void Disable_BLE(void)
 {
-	if(bleActive==1 && connect==0 && Clock_Time()-time>DELAY){
-			bleActive=0;
-			BLE_Common_Init();
+	int tempsEcoulee = (int) Clock_Time()-time;
+	/*Si le BLE est activé et que le délai de connexion est expiré,
+	 * la découverte est désactivé*/
+	if(bleActive==1 && tempsEcoulee>DELAY){
+		DEBUG_LINE("J'ESPERE QUE VOUS ETES DEJA CONNECTE");
+		aci_gap_set_non_discoverable();
+		bleActive = 0;
 		}
 }
