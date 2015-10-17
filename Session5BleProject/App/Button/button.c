@@ -2,6 +2,7 @@
 #include "button.h"
 #include "debug.h"
 #include "stm32f4xx_nucleo.h"
+#include "ble_common.h"
 
 static gp_timer_t button_read_timer;
 static gp_timer_t button_hold_timer;

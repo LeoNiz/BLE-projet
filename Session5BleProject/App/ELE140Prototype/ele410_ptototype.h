@@ -5,5 +5,6 @@
 
 void ELE410_Prototype_Init(void);
 void ELE410_Prototype_Process(void);
+void Button_Button_Long_Pressed_CB(void);
 
 #endif //ELE410_PROTOTYPE_H_
