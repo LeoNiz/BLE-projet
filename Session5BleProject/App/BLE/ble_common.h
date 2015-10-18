@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 
+void Add_Acc_Service(void);
 void BLE_Common_Init(void);
 void BLE_Common_Process(void);
 
