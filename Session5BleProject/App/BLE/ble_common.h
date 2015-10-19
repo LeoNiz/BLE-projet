@@ -21,6 +21,37 @@
 
 #include <stdlib.h>
 
+
+//DEFINE
+/* Exported defines ----------------------------------------------------------*/
+/**
+ * @brief Instantiate two new services:
+ *        1. Timer Service with two characteristics
+ *           - Seconds characteristic (Readable only)
+ *           - Minutes characteristics (Readable and Notifiable)
+ *        2. LED Button Service with one characteristic
+ *           - LED characteristic (Readable and Writable)
+ */
+#define NEW_SERVICES 0
+/**
+ * @}
+ */
+
+/** @addtogroup SENSOR_SERVICE_Exported_Types
+ *  @{
+ */
+typedef int i32_t;
+
+/**
+ * @brief Structure containing acceleration value (in mg) of each axis.
+ */
+typedef struct {
+  i32_t AXIS_X;
+  i32_t AXIS_Y;
+  i32_t AXIS_Z;
+} AxesRaw_t;
+
+//FONCTIONS
 void BLE_Common_Init(void);
 void BLE_Common_Process(void);
 
@@ -32,5 +63,11 @@ void Write_Request_CB(uint16_t handle, uint8_t *data, uint16_t length);
 void Read_Request_CB(uint16_t handle);
 
 tBleStatus Add_Acc_Service(void);
+void User_Process(AxesRaw_t* p_axes);
+tBleStatus Acc_Update(AxesRaw_t *data);
+void Update_Time_Characteristics(void);
+tBleStatus Seconds_Update(void);
+tBleStatus Minutes_Notify(void);
+tBleStatus Add_Environmental_Sensor_Service(void);
 
 #endif //BLE_COMMON_H_

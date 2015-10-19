@@ -9,7 +9,35 @@ do {\
             uuid_struct[8] = uuid_8; uuid_struct[9] = uuid_9; uuid_struct[10] = uuid_10; uuid_struct[11] = uuid_11; \
                 uuid_struct[12] = uuid_12; uuid_struct[13] = uuid_13; uuid_struct[14] = uuid_14; uuid_struct[15] = uuid_15; \
 }while(0)
+#if NEW_SERVICES
+  #define COPY_ACC_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x01,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_FREE_FALL_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0x02,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_ACC_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x03,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
+  #define COPY_ENV_SENS_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x04,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_TEMP_CHAR_UUID(uuid_struct)         COPY_UUID_128(uuid_struct,0x05,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_PRESS_CHAR_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0x06,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_HUMIDITY_CHAR_UUID(uuid_struct)     COPY_UUID_128(uuid_struct,0x07,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+
+  // Time service: uuid = 0x08, 0x36, 0x6e, 0x80, 0xcf, 0x3a, 0x11, 0xe1, 0x9a, 0xb4, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b
+  //      straight uuid = 0x08366e80cf3a11e19ab40002a5d5c51b
+  #define COPY_TIME_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x08,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_TIME_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x09,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_MINUTE_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0x0a,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+
+  // LED service
+  #define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x0b,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+#else
+  #define COPY_ACC_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x02,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_FREE_FALL_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0xe2,0x3e,0x78,0xa0, 0xcf,0x4a, 0x11,0xe1, 0x8f,0xfc, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_ACC_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x34,0x0a,0x1b,0x80, 0xcf,0x4b, 0x11,0xe1, 0xac,0x36, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+
+  #define COPY_ENV_SENS_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x42,0x82,0x1a,0x40, 0xe4,0x77, 0x11,0xe2, 0x82,0xd0, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_TEMP_CHAR_UUID(uuid_struct)         COPY_UUID_128(uuid_struct,0xa3,0x2e,0x55,0x20, 0xe4,0x77, 0x11,0xe2, 0xa9,0xe3, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_PRESS_CHAR_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0xcd,0x20,0xc4,0x80, 0xe4,0x8b, 0x11,0xe2, 0x84,0x0b, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_HUMIDITY_CHAR_UUID(uuid_struct)     COPY_UUID_128(uuid_struct,0x01,0xc5,0x0b,0x60, 0xe4,0x8c, 0x11,0xe2, 0xa0,0x73, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+#endif
 /* Store Value into a buffer in Little Endian Format */
 #define STORE_LE_16(buf, val)    ( ((buf)[0] =  (uint8_t) (val)    ) , \
                                    ((buf)[1] =  (uint8_t) (val>>8) ) )
@@ -18,11 +46,21 @@ do {\
 volatile int connected = FALSE;
 volatile uint8_t set_connectable = 1;
 volatile uint16_t connection_handle = 0;
+AxesRaw_t axes_data;
+uint16_t sampleServHandle, TXCharHandle, RXCharHandle;
 uint16_t accServHandle, freeFallCharHandle, accCharHandle;
+uint16_t envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle;
+
+//#if NEW_SERVICES
+  uint16_t timeServHandle, secondsCharHandle, minuteCharHandle;
+  uint16_t ledServHandle, ledButtonCharHandle;
+  uint8_t ledState = 0;
+  int previousMinuteValue = -1;
+//#endif
 
 void BLE_Common_Init(void)
 {
-	const char *name = "Team2";
+	const char *name = "BlueNRG";
 	//This avoid to clear the cache on some Android device
 #ifdef BLUENRG_MS
 	uint8_t SERVER_BDADDR[] =
@@ -97,6 +135,35 @@ void BLE_Common_Init(void)
 	    DEBUG_LINE("Acc service added successfully.\n");
 	  else
 	    DEBUG_LINE("Error while adding Acc service.\n");
+	  ret = Add_Environmental_Sensor_Service();
+
+	    if(ret == BLE_STATUS_SUCCESS)
+	      DEBUG_LINE("Environmental Sensor service added successfully.\n");
+	    else
+	      DEBUG_LINE("Error while adding Environmental Sensor service.\n");
+
+	  #if NEW_SERVICES
+	    /* Instantiate Timer Service with two characteristics:
+	     * - seconds characteristic (Readable only)
+	     * - minutes characteristics (Readable and Notifiable )
+	     */
+	    ret = Add_Time_Service();
+
+	    if(ret == BLE_STATUS_SUCCESS)
+	      DEBUG_LINE("Time service added successfully.\n");
+	    else
+	      DEBUG_LINE("Error while adding Time service.\n");
+
+	    /* Instantiate LED Button Service with one characteristic:
+	     * - LED characteristic (Readable and Writable)
+	     */
+	    ret = Add_LED_Service();
+
+	    if(ret == BLE_STATUS_SUCCESS)
+	      DEBUG_LINE("LED service added successfully.\n");
+	    else
+	      DEBUG_LINE("Error while adding LED service.\n");
+	  #endif
 
 	/* Set output power level */
 	ret = aci_hal_set_tx_power_level(1, 4);
@@ -105,6 +172,10 @@ void BLE_Common_Init(void)
 void BLE_Common_Process(void)
 {
 	HCI_Process();
+	User_Process(&axes_data);
+	#if NEW_SERVICES
+	    Update_Time_Characteristics();
+	#endif
 }
 
 void BLE_Common_Set_Discoverable(void)
@@ -267,3 +338,230 @@ fail:
 
 }
 
+void User_Process(AxesRaw_t* p_axes)
+{
+  if(set_connectable){
+	  BLE_Common_Set_Discoverable();
+    set_connectable = FALSE;
+  }
+
+  /* Check if the user has pushed the button */
+  if(BSP_PB_GetState(BUTTON_KEY) == RESET)
+  {
+    while (BSP_PB_GetState(BUTTON_KEY) == RESET);
+
+    //BSP_LED_Toggle(LED2); //used for debugging (BSP_LED_Init() above must be also enabled)
+
+    if(connected)
+    {
+      /* Update acceleration data */
+      p_axes->AXIS_X += 0;
+      p_axes->AXIS_Y += 10;
+      p_axes->AXIS_Z += 0;
+      //DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", p_axes->AXIS_X, p_axes->AXIS_Y, p_axes->AXIS_Z);
+      Acc_Update(p_axes);
+    }
+  }
+}
+
+tBleStatus Acc_Update(AxesRaw_t *data)
+{
+  tBleStatus ret;
+  uint8_t buff[6];
+
+  STORE_LE_16(buff,data->AXIS_X);
+  STORE_LE_16(buff+2,data->AXIS_Y);
+  STORE_LE_16(buff+4,data->AXIS_Z);
+
+  ret = aci_gatt_update_char_value(accServHandle, accCharHandle, 0, 6, buff);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating ACC characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+}
+
+void Update_Time_Characteristics(void) {
+  /* update "seconds and minutes characteristics" of time service */
+  Seconds_Update();
+  Minutes_Notify();
+}
+
+tBleStatus Seconds_Update(void)
+{
+  uint32_t val;
+  tBleStatus ret;
+
+  /* Obtain system tick value in milliseconds, and convert it to seconds. */
+  val = HAL_GetTick();
+  val = val/1000;
+
+  /* create a time[] array to pass as last argument of aci_gatt_update_char_value() API*/
+  const uint8_t time[4] = {(val >> 24)&0xFF, (val >> 16)&0xFF, (val >> 8)&0xFF, (val)&0xFF};
+
+  /*
+   * Update value of "Seconds characteristic" using aci_gatt_update_char_value() API
+   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
+   * API description
+   */
+  ret = aci_gatt_update_char_value(timeServHandle, secondsCharHandle, 0, 4,
+                                   time);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating TIME characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+}
+
+tBleStatus Minutes_Notify(void)
+{
+  uint32_t val;
+  uint32_t minuteValue;
+  tBleStatus ret;
+
+  /* Obtain system tick value in milliseconds */
+  val = HAL_GetTick();
+
+  /* update "Minutes characteristic" value iff it has changed w.r.t. previous
+   * "minute" value.
+   */
+  if((minuteValue=val/(60*1000))!=previousMinuteValue) {
+    /* memorize this "minute" value for future usage */
+    previousMinuteValue = minuteValue;
+
+    /* create a time[] array to pass as last argument of aci_gatt_update_char_value() API*/
+    const uint8_t time[4] = {(minuteValue >> 24)&0xFF, (minuteValue >> 16)&0xFF, (minuteValue >> 8)&0xFF, (minuteValue)&0xFF};
+
+  /*
+   * Update value of "Minutes characteristic" using aci_gatt_update_char_value() API
+   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
+   * API description
+   */
+    ret = aci_gatt_update_char_value(timeServHandle, minuteCharHandle, 0, 4,
+                                     time);
+    if (ret != BLE_STATUS_SUCCESS){
+      PRINTF("Error while updating TIME characteristic.\n") ;
+      return BLE_STATUS_ERROR ;
+    }
+  }
+  return BLE_STATUS_SUCCESS;
+}
+
+tBleStatus Add_Environmental_Sensor_Service(void)
+{
+  tBleStatus ret;
+  uint8_t uuid[16];
+  uint16_t uuid16;
+  charactFormat charFormat;
+  uint16_t descHandle;
+
+  COPY_ENV_SENS_SERVICE_UUID(uuid);
+  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 10,
+                          &envSensServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  /* Temperature Characteristic */
+  COPY_TEMP_CHAR_UUID(uuid);
+  ret =  aci_gatt_add_char(envSensServHandle, UUID_TYPE_128, uuid, 2,
+                           CHAR_PROP_READ, ATTR_PERMISSION_NONE,
+                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                           16, 0, &tempCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  charFormat.format = FORMAT_SINT16;
+  charFormat.exp = -1;
+  charFormat.unit = UNIT_TEMP_CELSIUS;
+  charFormat.name_space = 0;
+  charFormat.desc = 0;
+
+  uuid16 = CHAR_FORMAT_DESC_UUID;
+
+  ret = aci_gatt_add_char_desc(envSensServHandle,
+                               tempCharHandle,
+                               UUID_TYPE_16,
+                               (uint8_t *)&uuid16,
+                               7,
+                               7,
+                               (void *)&charFormat,
+                               ATTR_PERMISSION_NONE,
+                               ATTR_ACCESS_READ_ONLY,
+                               0,
+                               16,
+                               FALSE,
+                               &descHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  /* Pressure Characteristic */
+  if(1){ //FIXME
+    COPY_PRESS_CHAR_UUID(uuid);
+    ret =  aci_gatt_add_char(envSensServHandle, UUID_TYPE_128, uuid, 3,
+                             CHAR_PROP_READ, ATTR_PERMISSION_NONE,
+                             GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                             16, 0, &pressCharHandle);
+    if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+    charFormat.format = FORMAT_SINT24;
+    charFormat.exp = -5;
+    charFormat.unit = UNIT_PRESSURE_BAR;
+    charFormat.name_space = 0;
+    charFormat.desc = 0;
+
+    uuid16 = CHAR_FORMAT_DESC_UUID;
+
+    ret = aci_gatt_add_char_desc(envSensServHandle,
+                                 pressCharHandle,
+                                 UUID_TYPE_16,
+                                 (uint8_t *)&uuid16,
+                                 7,
+                                 7,
+                                 (void *)&charFormat,
+                                 ATTR_PERMISSION_NONE,
+                                 ATTR_ACCESS_READ_ONLY,
+                                 0,
+                                 16,
+                                 FALSE,
+                                 &descHandle);
+    if (ret != BLE_STATUS_SUCCESS) goto fail;
+  }
+  /* Humidity Characteristic */
+  if(1){   //FIXME
+    COPY_HUMIDITY_CHAR_UUID(uuid);
+    ret =  aci_gatt_add_char(envSensServHandle, UUID_TYPE_128, uuid, 2,
+                             CHAR_PROP_READ, ATTR_PERMISSION_NONE,
+                             GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                             16, 0, &humidityCharHandle);
+    if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+    charFormat.format = FORMAT_UINT16;
+    charFormat.exp = -1;
+    charFormat.unit = UNIT_UNITLESS;
+    charFormat.name_space = 0;
+    charFormat.desc = 0;
+
+    uuid16 = CHAR_FORMAT_DESC_UUID;
+
+    ret = aci_gatt_add_char_desc(envSensServHandle,
+                                 humidityCharHandle,
+                                 UUID_TYPE_16,
+                                 (uint8_t *)&uuid16,
+                                 7,
+                                 7,
+                                 (void *)&charFormat,
+                                 ATTR_PERMISSION_NONE,
+                                 ATTR_ACCESS_READ_ONLY,
+                                 0,
+                                 16,
+                                 FALSE,
+                                 &descHandle);
+    if (ret != BLE_STATUS_SUCCESS) goto fail;
+  }
+  PRINTF("Service ENV_SENS added. Handle 0x%04X, TEMP Charac handle: 0x%04X, PRESS Charac handle: 0x%04X, HUMID Charac handle: 0x%04X\n",envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding ENV_SENS service.\n");
+  return BLE_STATUS_ERROR ;
+
+}

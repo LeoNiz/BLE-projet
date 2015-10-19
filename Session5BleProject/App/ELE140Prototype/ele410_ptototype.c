@@ -16,17 +16,17 @@ void ELE410_Prototype_Init(void)
 
 void ELE410_Prototype_Process(void)
 {
-	Disable_BLE();
+	//Disable_BLE();
 }
 
 void Button_Button_Long_Pressed_CB(void)
 {
-	time = Clock_Time();
+	//time = Clock_Time();
 	/*Lance le discoverable mode*/
-	BLE_Common_Set_Discoverable();
+	//BLE_Common_Set_Discoverable();
 	/*BLE maintenant actif*/
-	bleActive = 1;
-	DEBUG_LINE("VOUS AVEZ %d s POUR VOUS CONNECTER", (int) DELAY/1000);
+	//bleActive = 1;
+	//DEBUG_LINE("VOUS AVEZ %d s POUR VOUS CONNECTER", (int) DELAY/1000);
 }
 
 void Disable_BLE(void)
