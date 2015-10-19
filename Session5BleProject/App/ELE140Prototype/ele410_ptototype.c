@@ -3,22 +3,15 @@
 #include "gp_timer.h"
 #include "debug.h"
 #include "ble_common.h"
-#include "ble_common.c"
-
-#define UUID_TYPE_128                              (0x02)
 
 static tClockTime time;
 static bleActive;
 const int DELAY = 120000;
 
-
-
-
 void ELE410_Prototype_Init(void)
 {
 	/*Initialement le BLE n'est pas actif*/
 	bleActive=0;
-
 }
 
 void ELE410_Prototype_Process(void)
@@ -47,7 +40,3 @@ void Disable_BLE(void)
 		bleActive = 0;
 		}
 }
-
-
-
-

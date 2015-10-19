@@ -20,39 +20,6 @@ volatile uint8_t set_connectable = 1;
 volatile uint16_t connection_handle = 0;
 uint16_t accServHandle, freeFallCharHandle, accCharHandle;
 
-void Add_Acc_Service(tBleStatus* ret)
-{
-
-  uint8_t uuid[16];
-
-  COPY_ACC_SERVICE_UUID(uuid);
-  &ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
-                          &accServHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  COPY_FREE_FALL_UUID(uuid);
-  &ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 1,
-                           CHAR_PROP_NOTIFY, ATTR_PERMISSION_NONE, 0,
-                           16, 0, &freeFallCharHandle);
-  if (&ret != BLE_STATUS_SUCCESS) goto fail;
-
-  COPY_ACC_UUID(uuid);
-  &ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 6,
-                           CHAR_PROP_NOTIFY|CHAR_PROP_READ,
-                           ATTR_PERMISSION_NONE,
-                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                           16, 0, &accCharHandle);
-  if (&ret != BLE_STATUS_SUCCESS) goto fail;
-
-  PRINTF("Service ACC added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Acc Charac handle: 0x%04X\n",accServHandle, freeFallCharHandle, accCharHandle);
-  &ret=BLE_STATUS_SUCCESS;
-
-fail:
-  PRINTF("Error while adding ACC service.\n");
-  &ret=BLE_STATUS_ERROR ;
-
-}
-
 void BLE_Common_Init(void)
 {
 	const char *name = "Team2";
@@ -123,47 +90,13 @@ void BLE_Common_Init(void)
 	}
 
 	DEBUG_LINE("SERVER: BLE Stack Initialized\n");
-//AJOUT
-	Add_Acc_Service(ret);
+
+	ret = Add_Acc_Service();
 
 	  if(ret == BLE_STATUS_SUCCESS)
 	    DEBUG_LINE("Acc service added successfully.\n");
 	  else
 	    DEBUG_LINE("Error while adding Acc service.\n");
-
-	  ret = Add_Environmental_Sensor_Service();
-
-	  if(ret == BLE_STATUS_SUCCESS)
-	    DEBUG_LINE("Environmental Sensor service added successfully.\n");
-	  else
-	    DEBUG_LINE("Error while adding Environmental Sensor service.\n");
-
-	#if NEW_SERVICES
-	  /* Instantiate Timer Service with two characteristics:
-	   * - seconds characteristic (Readable only)
-	   * - minutes characteristics (Readable and Notifiable )
-	   */
-	  ret = Add_Time_Service();
-
-	  if(ret == BLE_STATUS_SUCCESS)
-	    DEBUG_LINE("Time service added successfully.\n");
-	  else
-	    DEBUG_LINE("Error while adding Time service.\n");
-
-	  /* Instantiate LED Button Service with one characteristic:
-	   * - LED characteristic (Readable and Writable)
-	   */
-	  ret = Add_LED_Service();
-
-	  if(ret == BLE_STATUS_SUCCESS)
-	    DEBUG_LINE("LED service added successfully.\n");
-	  else
-	    DEBUG_LINE("Error while adding LED service.\n");
-	#endif
-
-
-	//STOP
-
 
 	/* Set output power level */
 	ret = aci_hal_set_tx_power_level(1, 4);
@@ -299,4 +232,38 @@ void HCI_Event_CB(void *pckt)
 	}
 }
 
+//NOUVELLES FONCTIONS
+tBleStatus Add_Acc_Service(void)
+{
+  tBleStatus ret;
+
+  uint8_t uuid[16];
+
+  COPY_ACC_SERVICE_UUID(uuid);
+  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
+                          &accServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  COPY_FREE_FALL_UUID(uuid);
+  ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 1,
+                           CHAR_PROP_NOTIFY, ATTR_PERMISSION_NONE, 0,
+                           16, 0, &freeFallCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  COPY_ACC_UUID(uuid);
+  ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 6,
+                           CHAR_PROP_NOTIFY|CHAR_PROP_READ,
+                           ATTR_PERMISSION_NONE,
+                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                           16, 0, &accCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  PRINTF("Service ACC added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Acc Charac handle: 0x%04X\n",accServHandle, freeFallCharHandle, accCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding ACC service.\n");
+  return BLE_STATUS_ERROR ;
+
+}
 

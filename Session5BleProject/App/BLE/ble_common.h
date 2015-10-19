@@ -21,7 +21,6 @@
 
 #include <stdlib.h>
 
-void Add_Acc_Service(void);
 void BLE_Common_Init(void);
 void BLE_Common_Process(void);
 
@@ -31,5 +30,7 @@ void HCI_Event_CB(void *pckt);
 
 void Write_Request_CB(uint16_t handle, uint8_t *data, uint16_t length);
 void Read_Request_CB(uint16_t handle);
+
+tBleStatus Add_Acc_Service(void);
 
 #endif //BLE_COMMON_H_
