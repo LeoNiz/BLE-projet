@@ -51,6 +51,7 @@ uint16_t sampleServHandle, TXCharHandle, RXCharHandle;
 uint16_t accServHandle, freeFallCharHandle, accCharHandle;
 uint16_t envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle;
 
+
 //#if NEW_SERVICES
   uint16_t timeServHandle, secondsCharHandle, minuteCharHandle;
   uint16_t ledServHandle, ledButtonCharHandle;
@@ -175,9 +176,9 @@ void BLE_Common_Process(void)
 {
 	HCI_Process();
 	User_Process(&axes_data);
-	#if NEW_SERVICES
+	//#if NEW_SERVICES
 	    Update_Time_Characteristics();
-	#endif
+	//#endif
 }
 
 void BLE_Common_Set_Discoverable(void)
@@ -299,15 +300,17 @@ void HCI_Event_CB(void *pckt)
 			Write_Request_CB(pr->attr_handle, pr->data, pr->data_length);
 		}
 			break;
+			//AJOUT
 		case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
-		        {
-		          /* this callback is invoked when a GATT attribute is modified
-		          extract callback data and pass to suitable handler function */
-		          evt_gatt_attr_modified *evt = (evt_gatt_attr_modified*)blue_evt->data;
+		 {
+		 /* this callback is invoked when a GATT attribute is modified
+		  extract callback data and pass to suitable handler function */
+		  evt_gatt_attr_modified *evt = (evt_gatt_attr_modified*)blue_evt->data;
 
-		          Attribute_Modified_CB(evt->attr_handle, evt->data_length, evt->att_data);
-		        }
-		        break;
+		  Attribute_Modified_CB(evt->attr_handle, evt->data_length, evt->att_data);
+		 }
+		 //STOP
+		    break;
 		}
 	}
 		break;

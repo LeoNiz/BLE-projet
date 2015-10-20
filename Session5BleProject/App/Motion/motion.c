@@ -13,14 +13,16 @@
 static int accAv = -1;
 
 void Motion_Init(void) {
-	Mems_StartReadSensors(10, ACCELEROMETER_SENSOR);
+	//Mems_StartReadSensors(10, ACCELEROMETER_SENSOR);
 }
 
 void Motion_Process(void) {
 
 }
 
-void Mems_Acc_CB(int32_t acc_x, int32_t acc_y, int32_t acc_z) {
+void CHANGE_Mems_Acc_CB(int32_t acc_x, int32_t acc_y, int32_t acc_z) {
+
+
 	/*Variables*/
 	int acc;
 	int angle30 = 1000/3;

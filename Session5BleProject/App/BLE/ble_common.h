@@ -50,6 +50,14 @@ typedef struct {
   i32_t AXIS_Y;
   i32_t AXIS_Z;
 } AxesRaw_t;
+// nouvelles datas
+int32_t acc_xn, acc_yn, acc_zn;
+int32_t gyr_xn, gyr_yn, gyr_zn;
+int32_t mag_xn, mag_yn, mag_zn;
+int32_t press1n, press2n;
+int32_t hum1n, hum2n;
+int32_t temp1n, temp2n;
+
 
 //FONCTIONS
 void BLE_Common_Init(void);
