@@ -71,13 +71,13 @@ void Mems_Mag_CB(int32_t mag_x, int32_t mag_y, int32_t mag_z) {
 }
 
 void Mems_Pressure_CB(int32_t d1, int32_t d2) {
-	DEBUG_LINE("Pressure: %d.%02d\n", (int ) d1, (int ) d2);
+	//DEBUG_LINE("Pressure: %d.%02d\n", (int ) d1, (int ) d2);
 	press1n = d1;
 	press2n = d2;
 }
 
 void Mems_Hum_CB(int32_t d1, int32_t d2) {
-	DEBUG_LINE("HUM: %d.%02d\n", (int ) d1, (int ) d2);
+	//DEBUG_LINE("HUM: %d.%02d\n", (int ) d1, (int ) d2);
 	hum1n = d1;
 	hum2n = d2;
 }

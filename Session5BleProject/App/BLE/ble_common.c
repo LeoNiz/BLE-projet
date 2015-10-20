@@ -237,9 +237,9 @@ void Read_Request_CB(uint16_t handle)
   }
   else if(handle == tempCharHandle + 1){
 	Mems_StartReadSensors(100,TEMPERATURE_SENSOR);
+	DEBUG_LINE("Temperature : %d.%02d C",(int)temp1n, (int)temp2n);
     int16_t data;
     data = temp1n;
-    DEBUG_LINE("Temperature : %d.%d C",(int)temp1n, (int)temp2n);
     Acc_Update((AxesRaw_t*)&axes_data); //FIXME: to overcome issue on Android App
                                         // If the user button is not pressed within
                                         // a short time after the connection,
@@ -247,17 +247,17 @@ void Read_Request_CB(uint16_t handle)
     Temp_Update(data);
   }
   else if(handle == pressCharHandle + 1){
+	Mems_StartReadSensors(100,PRESSURE_SENSOR);
+	DEBUG_LINE("Pression : %d.%02d hPa", (int) press1n, (int) press2n);
     int32_t data;
-    struct timer t;
-    Timer_Set(&t, CLOCK_SECOND/10);
-    data = 100000 + ((uint64_t)rand()*1000)/RAND_MAX;
+    data = press1n;
     Press_Update(data);
   }
   else if(handle == humidityCharHandle + 1){
-    uint16_t data;
-
-    data = 450 + ((uint64_t)rand()*100)/RAND_MAX;
-
+	Mems_StartReadSensors(100,HUMIDITY_SENSOR);
+	DEBUG_LINE("HUM: %d.%02d\n %", (int ) hum1n, (int ) hum2n);
+	uint16_t data;
+    data = hum1n;
     Humidity_Update(data);
   }
 
