@@ -231,9 +231,36 @@ void GAP_DisconnectionComplete_CB(void)
 
 void Read_Request_CB(uint16_t handle)
 {
-	//This Callback is called when a GATT Client wants to read an attribute
-	if (connection_handle != 0)
-		aci_gatt_allow_read(connection_handle);
+  if(handle == accCharHandle + 1){
+    Acc_Update((AxesRaw_t*)&axes_data);
+  }
+  else if(handle == tempCharHandle + 1){
+    int16_t data;
+    data = 270 + ((uint64_t)rand()*15)/RAND_MAX; //sensor emulation
+    Acc_Update((AxesRaw_t*)&axes_data); //FIXME: to overcome issue on Android App
+                                        // If the user button is not pressed within
+                                        // a short time after the connection,
+                                        // a pop-up reports a "No valid characteristics found" error.
+    Temp_Update(data);
+  }
+  else if(handle == pressCharHandle + 1){
+    int32_t data;
+    struct timer t;
+    Timer_Set(&t, CLOCK_SECOND/10);
+    data = 100000 + ((uint64_t)rand()*1000)/RAND_MAX;
+    Press_Update(data);
+  }
+  else if(handle == humidityCharHandle + 1){
+    uint16_t data;
+
+    data = 450 + ((uint64_t)rand()*100)/RAND_MAX;
+
+    Humidity_Update(data);
+  }
+
+  //EXIT:
+  if(connection_handle != 0)
+    aci_gatt_allow_read(connection_handle);
 }
 
 void Write_Request_CB(uint16_t handle, uint8_t *data, uint16_t length)
@@ -683,3 +710,5 @@ tBleStatus Humidity_Update(uint16_t humidity)
   return BLE_STATUS_SUCCESS;
 
 }
+
+

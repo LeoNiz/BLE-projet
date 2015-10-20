@@ -79,5 +79,10 @@ tBleStatus Minutes_Notify(void);
 tBleStatus Add_Environmental_Sensor_Service(void);
 tBleStatus Add_LED_Service(void);
 void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data);
+tBleStatus Temp_Update(int16_t temp);
+tBleStatus Press_Update(int32_t press);
+tBleStatus Humidity_Update(uint16_t humidity);
+void Read_Request_CB(uint16_t handle);
+
 
 #endif //BLE_COMMON_H_
