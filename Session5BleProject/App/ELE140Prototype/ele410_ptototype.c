@@ -83,7 +83,7 @@ void Mems_Hum_CB(int32_t d1, int32_t d2) {
 }
 
 void Mems_Temp_CB(int32_t d1, int32_t d2) {
-	DEBUG_LINE("TEMP: %d.%02d\n", (int ) d1, (int ) d2);
+	//DEBUG_LINE("TEMP: %d.%02d\n", (int ) d1, (int ) d2);
 	temp1n = d1;
 	temp2n = d2;
 }

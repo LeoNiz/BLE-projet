@@ -1,4 +1,5 @@
 #include "ble_common.h"
+#include "mems.h"
 
 #define BDADDR_SIZE 6
 
@@ -176,9 +177,9 @@ void BLE_Common_Process(void)
 {
 	HCI_Process();
 	User_Process(&axes_data);
-	//#if NEW_SERVICES
+	#if NEW_SERVICES
 	    Update_Time_Characteristics();
-	//#endif
+	#endif
 }
 
 void BLE_Common_Set_Discoverable(void)
@@ -235,8 +236,10 @@ void Read_Request_CB(uint16_t handle)
     Acc_Update((AxesRaw_t*)&axes_data);
   }
   else if(handle == tempCharHandle + 1){
+	Mems_StartReadSensors(100,TEMPERATURE_SENSOR);
     int16_t data;
-    data = 270 + ((uint64_t)rand()*15)/RAND_MAX; //sensor emulation
+    data = temp1n;
+    DEBUG_LINE("Temperature : %d.%d C",(int)temp1n, (int)temp2n);
     Acc_Update((AxesRaw_t*)&axes_data); //FIXME: to overcome issue on Android App
                                         // If the user button is not pressed within
                                         // a short time after the connection,
