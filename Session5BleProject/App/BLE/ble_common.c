@@ -26,8 +26,8 @@ do {\
   #define COPY_MINUTE_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0x0a,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
   // LED service
-  #define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x0b,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-  #define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  //#define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x0b,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  //#define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 #else
   #define COPY_ACC_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x02,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
   #define COPY_FREE_FALL_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0xe2,0x3e,0x78,0xa0, 0xcf,0x4a, 0x11,0xe1, 0x8f,0xfc, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
@@ -142,6 +142,16 @@ void BLE_Common_Init(void)
 	    else
 	      DEBUG_LINE("Error while adding Environmental Sensor service.\n");
 
+	    /* Instantiate LED Button Service with one characteristic:
+	   	     * - LED characteristic (Readable and Writable)
+	   	     */
+	   	    ret = Add_LED_Service();
+
+	   	    if(ret == BLE_STATUS_SUCCESS)
+	   	      DEBUG_LINE("LED service added successfully.\n");
+	   	    else
+	   	      DEBUG_LINE("Error while adding LED service.\n");
+
 	  #if NEW_SERVICES
 	    /* Instantiate Timer Service with two characteristics:
 	     * - seconds characteristic (Readable only)
@@ -154,15 +164,7 @@ void BLE_Common_Init(void)
 	    else
 	      DEBUG_LINE("Error while adding Time service.\n");
 
-	    /* Instantiate LED Button Service with one characteristic:
-	     * - LED characteristic (Readable and Writable)
-	     */
-	    ret = Add_LED_Service();
 
-	    if(ret == BLE_STATUS_SUCCESS)
-	      DEBUG_LINE("LED service added successfully.\n");
-	    else
-	      DEBUG_LINE("Error while adding LED service.\n");
 	  #endif
 
 	/* Set output power level */
@@ -297,6 +299,15 @@ void HCI_Event_CB(void *pckt)
 			Write_Request_CB(pr->attr_handle, pr->data, pr->data_length);
 		}
 			break;
+		case EVT_BLUE_GATT_ATTRIBUTE_MODIFIED:
+		        {
+		          /* this callback is invoked when a GATT attribute is modified
+		          extract callback data and pass to suitable handler function */
+		          evt_gatt_attr_modified *evt = (evt_gatt_attr_modified*)blue_evt->data;
+
+		          Attribute_Modified_CB(evt->attr_handle, evt->data_length, evt->att_data);
+		        }
+		        break;
 		}
 	}
 		break;
@@ -355,9 +366,9 @@ void User_Process(AxesRaw_t* p_axes)
     if(connected)
     {
       /* Update acceleration data */
-      p_axes->AXIS_X += 0;
-      p_axes->AXIS_Y += 10;
-      p_axes->AXIS_Z += 0;
+      p_axes->AXIS_X += 500;
+      p_axes->AXIS_Y += 500;
+      p_axes->AXIS_Z += 500;
       //DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", p_axes->AXIS_X, p_axes->AXIS_Y, p_axes->AXIS_Z);
       Acc_Update(p_axes);
     }
@@ -399,7 +410,6 @@ tBleStatus Seconds_Update(void)
 
   /* create a time[] array to pass as last argument of aci_gatt_update_char_value() API*/
   const uint8_t time[4] = {(val >> 24)&0xFF, (val >> 16)&0xFF, (val >> 8)&0xFF, (val)&0xFF};
-
   /*
    * Update value of "Seconds characteristic" using aci_gatt_update_char_value() API
    * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
@@ -564,4 +574,54 @@ fail:
   PRINTF("Error while adding ENV_SENS service.\n");
   return BLE_STATUS_ERROR ;
 
+}
+
+tBleStatus Add_LED_Service(void)
+{
+
+#define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0xaf,0xce,0xb8,0xe0,0x03,0x77,0x11,0xe0,0xa5,0xc2,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+#define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0xa4,0xc3,0xff,0xc1,0xaa,0x17,0x11,0xe0,0x5a,0xba,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  tBleStatus ret;
+  uint8_t uuid[16];
+
+  /* copy "LED service UUID" defined above to 'uuid' local variable */
+  COPY_LED_SERVICE_UUID(uuid);
+  /*
+   * now add "LED service" to GATT server, service handle is returned
+   * via 'ledServHandle' parameter of aci_gatt_add_serv() API.
+   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
+   * API description
+  */
+  ret = aci_gatt_add_serv(UUID_TYPE_128, uuid, PRIMARY_SERVICE, 7,
+                          &ledServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  /* copy "LED button characteristic UUID" defined above to 'uuid' local variable */
+  COPY_LED_UUID(uuid);
+  /*
+   * now add "LED button characteristic" to LED service, characteristic handle
+   * is returned via 'ledButtonCharHandle' parameter of aci_gatt_add_char() API.
+   * This characteristic is writable, as specified by 'CHAR_PROP_WRITE' parameter.
+   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
+   * API description
+  */
+  ret =  aci_gatt_add_char(ledServHandle, UUID_TYPE_128, uuid, 4,
+                           CHAR_PROP_WRITE | CHAR_PROP_WRITE_WITHOUT_RESP, ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
+                           16, 1, &ledButtonCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  PRINTF("Service LED BUTTON added. Handle 0x%04X, LED button Charac handle: 0x%04X\n",ledServHandle, ledButtonCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding LED service.\n");
+  return BLE_STATUS_ERROR;
+}
+
+void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data)
+{
+  /* If GATT client has modified 'LED button characteristic' value, toggle LED2 */
+  if(handle == ledButtonCharHandle + 1){
+      BSP_LED_Toggle(LED2);
+  }
 }

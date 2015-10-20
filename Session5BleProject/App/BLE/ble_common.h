@@ -69,5 +69,7 @@ void Update_Time_Characteristics(void);
 tBleStatus Seconds_Update(void);
 tBleStatus Minutes_Notify(void);
 tBleStatus Add_Environmental_Sensor_Service(void);
+tBleStatus Add_LED_Service(void);
+void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data);
 
 #endif //BLE_COMMON_H_
