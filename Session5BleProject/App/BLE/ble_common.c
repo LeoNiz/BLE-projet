@@ -628,3 +628,58 @@ void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_da
       BSP_LED_Toggle(LED2);
   }
 }
+// TEMP, PRESS, HUMIDITY UPDATE
+tBleStatus Temp_Update(int16_t temp)
+{
+  tBleStatus ret;
+
+  ret = aci_gatt_update_char_value(envSensServHandle, tempCharHandle, 0, 2,
+                                   (uint8_t*)&temp);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating TEMP characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+
+}
+
+/**
+ * @brief  Update pressure characteristic value.
+ * @param  int32_t Pressure in mbar
+ * @retval tBleStatus Status
+ */
+tBleStatus Press_Update(int32_t press)
+{
+  tBleStatus ret;
+
+  ret = aci_gatt_update_char_value(envSensServHandle, pressCharHandle, 0, 3,
+                                   (uint8_t*)&press);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating TEMP characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+
+}
+
+/**
+ * @brief  Update humidity characteristic value.
+ * @param  uint16_thumidity RH (Relative Humidity) in thenths of %
+ * @retval tBleStatus      Status
+ */
+tBleStatus Humidity_Update(uint16_t humidity)
+{
+  tBleStatus ret;
+
+  ret = aci_gatt_update_char_value(envSensServHandle, humidityCharHandle, 0, 2,
+                                   (uint8_t*)&humidity);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating TEMP characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+
+}
