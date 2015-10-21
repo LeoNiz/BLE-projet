@@ -665,8 +665,6 @@ void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_da
   /* If GATT client has modified 'LED button characteristic' value, toggle LED2 */
   if(handle == ledButtonCharHandle + 1){
       BSP_LED_Toggle(LED2);
-      if(led2==0) led2==1;
-      else led2==0;
   }
 }
 // TEMP, PRESS, HUMIDITY UPDATE
@@ -724,20 +722,5 @@ tBleStatus Humidity_Update(uint16_t humidity)
   return BLE_STATUS_SUCCESS;
 
 }
-
-tBleStatus LED_Update(uint16_t led)
-{
-  tBleStatus ret;
-
-  ret = aci_gatt_update_char_value(ledServHandle, ledButtonCharHandle, 0, 1,
-                                   (uint8_t*)&led);
-
-  if (ret != BLE_STATUS_SUCCESS){
-    PRINTF("Error while updating LED characteristic.\n") ;
-    return BLE_STATUS_ERROR ;
-  }
-  return BLE_STATUS_SUCCESS;
-}
-
 
 

@@ -57,7 +57,6 @@ int32_t mag_xn, mag_yn, mag_zn;
 int32_t press1n, press2n;
 int32_t hum1n, hum2n;
 int32_t temp1n, temp2n;
-int led2;
 
 
 //FONCTIONS
