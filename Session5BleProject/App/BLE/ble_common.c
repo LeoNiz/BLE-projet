@@ -238,8 +238,10 @@ void Read_Request_CB(uint16_t handle)
   else if(handle == tempCharHandle + 1){
 	Mems_StartReadSensors(100,TEMPERATURE_SENSOR);
 	DEBUG_LINE("Temperature : %d.%02d C",(int)temp1n, (int)temp2n);
+	int temp1 = (int)temp1n;
+	int temp2 = (int)temp2n;
     int16_t data;
-    data = temp1n;
+    data = (int16_t)(temp1*100+temp2);
     Acc_Update((AxesRaw_t*)&axes_data); //FIXME: to overcome issue on Android App
                                         // If the user button is not pressed within
                                         // a short time after the connection,
@@ -249,15 +251,19 @@ void Read_Request_CB(uint16_t handle)
   else if(handle == pressCharHandle + 1){
 	Mems_StartReadSensors(100,PRESSURE_SENSOR);
 	DEBUG_LINE("Pression : %d.%02d hPa", (int) press1n, (int) press2n);
+	int press1 = (int)press1n;
+	int press2 = (int)press2n;
     int32_t data;
-    data = press1n;
+    data = (int32_t)(press1*100+press2);
     Press_Update(data);
   }
   else if(handle == humidityCharHandle + 1){
 	Mems_StartReadSensors(100,HUMIDITY_SENSOR);
-	DEBUG_LINE("HUM: %d.%02d\n %", (int ) hum1n, (int ) hum2n);
+	DEBUG_LINE("HUM: %d.%02d", (int ) hum1n, (int ) hum2n);
+	int hum1 = (int)hum1n;
+	int hum2 = (int)hum2n;
 	uint16_t data;
-    data = hum1n;
+    data = (uint16_t)(hum1*100+hum2);
     Humidity_Update(data);
   }
 
@@ -399,9 +405,12 @@ void User_Process(AxesRaw_t* p_axes)
     if(connected)
     {
       /* Update acceleration data */
-      p_axes->AXIS_X += 500;
-      p_axes->AXIS_Y += 500;
-      p_axes->AXIS_Z += 500;
+      Mems_StartReadSensors(100,ACCELEROMETER_SENSOR);
+      DEBUG_LINE("ACC_X: %d, ACC_Y: %d, ACC_Z: %d\n", (int ) acc_xn, (int ) acc_yn,
+    				(int ) acc_zn);
+      p_axes->AXIS_X = acc_xn;
+      p_axes->AXIS_Y = acc_yn;
+      p_axes->AXIS_Z = acc_zn;
       //DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", p_axes->AXIS_X, p_axes->AXIS_Y, p_axes->AXIS_Z);
       Acc_Update(p_axes);
     }
@@ -656,6 +665,8 @@ void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_da
   /* If GATT client has modified 'LED button characteristic' value, toggle LED2 */
   if(handle == ledButtonCharHandle + 1){
       BSP_LED_Toggle(LED2);
+      if(led2==0) led2==1;
+      else led2==0;
   }
 }
 // TEMP, PRESS, HUMIDITY UPDATE
@@ -713,5 +724,20 @@ tBleStatus Humidity_Update(uint16_t humidity)
   return BLE_STATUS_SUCCESS;
 
 }
+
+tBleStatus LED_Update(uint16_t led)
+{
+  tBleStatus ret;
+
+  ret = aci_gatt_update_char_value(ledServHandle, ledButtonCharHandle, 0, 1,
+                                   (uint8_t*)&led);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating LED characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+}
+
 
 

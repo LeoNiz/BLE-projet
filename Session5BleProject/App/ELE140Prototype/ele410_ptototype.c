@@ -46,8 +46,8 @@ void Disable_BLE(void)
 
 //Les fonctions mems recuperent les datas qui sont reinjectees dans les datas du ble_common.h
 void Mems_Acc_CB(int32_t acc_x, int32_t acc_y, int32_t acc_z) {
-	DEBUG_LINE("ACC_X: %d, ACC_Y: %d, ACC_Z: %d\n", (int ) acc_x, (int ) acc_y,
-			(int ) acc_z);
+	//DEBUG_LINE("ACC_X: %d, ACC_Y: %d, ACC_Z: %d\n", (int ) acc_x, (int ) acc_y,
+			//(int ) acc_z);
 	acc_xn = acc_x;
 	acc_yn = acc_y;
 	acc_zn = acc_z;
