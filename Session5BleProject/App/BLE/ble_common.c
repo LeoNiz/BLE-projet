@@ -26,6 +26,8 @@ do {\
   #define COPY_TIME_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x09,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
   #define COPY_MINUTE_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0x0a,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
+  #define COPY_COUNT_SERVICE_UUID(uuid_struct) COPY_UUID_128(uuid_struct,0xc6,0x09,0xb3,0xc3,0x09,0xf8,0x11,0xe7,0x53,0x9a,0x00,0x02,0xa5,0xd5,0xc5,0x1b);
+  #define COPY_COUNT_UUID(uuid_struct) 		   COPY_UUID_128(uuid_struct,0x9a,0xb6,0x73,0x9c,0x00,0x65,0x11,0xe7,0x11,0xd7,0x00,0x02,0xa5,0xd5,0xc5,0x1b);
   // LED service
   //#define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x0b,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
   //#define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
@@ -51,7 +53,7 @@ AxesRaw_t axes_data;
 uint16_t sampleServHandle, TXCharHandle, RXCharHandle;
 uint16_t accServHandle, freeFallCharHandle, accCharHandle;
 uint16_t envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle;
-
+uint16_t countServHandle, countCharHandle;
 
 //#if NEW_SERVICES
   uint16_t timeServHandle, secondsCharHandle, minuteCharHandle;
@@ -234,7 +236,6 @@ void Read_Request_CB(uint16_t handle)
 {
   if(handle == accCharHandle + 1){
 	  Mems_StartReadSensors(100,ACCELEROMETER_SENSOR);
-
 	  (&axes_data)->AXIS_X = acc_xn;
 	  (&axes_data)->AXIS_Y = acc_yn;
 	  (&axes_data)->AXIS_Z = acc_zn;
@@ -654,7 +655,7 @@ tBleStatus Add_LED_Service(void)
    * API description
   */
   ret =  aci_gatt_add_char(ledServHandle, UUID_TYPE_128, uuid, 4,
-                           CHAR_PROP_WRITE | CHAR_PROP_WRITE_WITHOUT_RESP, ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
+                           CHAR_PROP_WRITE | CHAR_PROP_READ, ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
                            16, 1, &ledButtonCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
@@ -729,4 +730,31 @@ tBleStatus Humidity_Update(uint16_t humidity)
 
 }
 
+tBleStatus Add_Count_Service(void)
+{
+  tBleStatus ret;
+
+  uint8_t uuid[16];
+
+  COPY_COUNT_SERVICE_UUID(uuid);
+  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
+                          &countServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  COPY_COUNT_UUID(uuid);
+  ret =  aci_gatt_add_char(countServHandle, UUID_TYPE_128, uuid, 2,
+                           CHAR_PROP_NOTIFY|CHAR_PROP_READ,
+                           ATTR_PERMISSION_NONE,
+                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                           16, 0, &accCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  PRINTF("Service COUNT added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Count Charac handle: 0x%04X\n",countServHandle, freeFallCharHandle, countCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding COUNT service.\n");
+  return BLE_STATUS_ERROR ;
+
+}
 
