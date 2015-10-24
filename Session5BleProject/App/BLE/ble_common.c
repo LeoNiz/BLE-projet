@@ -28,7 +28,11 @@ do {\
 
   #define COPY_COUNT_SERVICE_UUID(uuid_struct) COPY_UUID_128(uuid_struct,0xc6,0x09,0xb3,0xc3,0x09,0xf8,0x11,0xe7,0x53,0x9a,0x00,0x02,0xa5,0xd5,0xc5,0x1b);
   #define COPY_COUNT_UUID(uuid_struct) 		   COPY_UUID_128(uuid_struct,0x9a,0xb6,0x73,0x9c,0x00,0x65,0x11,0xe7,0x11,0xd7,0x00,0x02,0xa5,0xd5,0xc5,0x1b);
-  // LED service
+
+  #define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0xaf,0xce,0xb8,0xe0,0x03,0x77,0x11,0xe0,0xa5,0xc2,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0xa4,0xc3,0xff,0xc1,0xaa,0x17,0x11,0xe0,0x5a,0xba,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+
+// LED service
   //#define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x0b,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
   //#define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 /*#else
@@ -54,24 +58,18 @@ uint16_t sampleServHandle, TXCharHandle, RXCharHandle;
 uint16_t accServHandle, freeFallCharHandle, accCharHandle;
 uint16_t envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle;
 uint16_t countServHandle, countCharHandle;
-
-//#if NEW_SERVICES
-  uint16_t timeServHandle, secondsCharHandle, minuteCharHandle;
-  uint16_t ledServHandle, ledButtonCharHandle;
-  uint8_t ledState = 0;
-  int previousMinuteValue = -1;
-//#endif
+uint16_t ledServHandle, ledButtonCharHandle;
+uint8_t ledState = 0;
 
 void BLE_Common_Init(void)
 {
-	const char *name = "BlueNRG";
+	const char *name = "Team2";
 	//This avoid to clear the cache on some Android device
 #ifdef BLUENRG_MS
 	uint8_t SERVER_BDADDR[] =
 	{	0x12, 0x34, 0x00, 0xE1, 0x80, 0x02};
 #else
-	uint8_t SERVER_BDADDR[] =
-	{ 0xCC, 0x45, 0x4C, 0x45, 0x00, 0x02 };
+	uint8_t SERVER_BDADDR[] = { 0xCC, 0x45, 0x4C, 0x45, 0x00, 0x02 };
 #endif
 	uint8_t bdaddr[BDADDR_SIZE];
 	uint16_t service_handle, dev_name_char_handle, appearance_char_handle;
@@ -90,32 +88,30 @@ void BLE_Common_Init(void)
 
 	ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
 	CONFIG_DATA_PUBADDR_LEN, bdaddr);
-	if (ret)
-	{
+	if (ret) {
 		DEBUG_LINE("Setting BD_ADDR failed.\n");
 	}
 
 	ret = aci_gatt_init();
-	if (ret)
-	{
+	if (ret) {
 		DEBUG_LINE("GATT_Init failed.\n");
 	}
 
 #ifdef BLUENRG_MS
 	ret = aci_gap_init(GAP_PERIPHERAL_ROLE, 0, 0x07, &service_handle, &dev_name_char_handle, &appearance_char_handle);
 #else
-	ret = aci_gap_init(GAP_PERIPHERAL_ROLE, &service_handle, &dev_name_char_handle, &appearance_char_handle);
+	ret = aci_gap_init(GAP_PERIPHERAL_ROLE, &service_handle,
+			&dev_name_char_handle, &appearance_char_handle);
 #endif
 
-	if (ret != BLE_STATUS_SUCCESS)
-	{
+	if (ret != BLE_STATUS_SUCCESS) {
 		DEBUG_LINE("GAP_Init failed.\n");
 	}
 
-	ret = aci_gatt_update_char_value(service_handle, dev_name_char_handle, 0, strlen(name), (uint8_t *) name);
+	ret = aci_gatt_update_char_value(service_handle, dev_name_char_handle, 0,
+			strlen(name), (uint8_t *) name);
 
-	if (ret)
-	{
+	if (ret) {
 		DEBUG_LINE("aci_gatt_update_char_value failed.\n");
 		while (1)
 			;
@@ -126,50 +122,32 @@ void BLE_Common_Init(void)
 	NULL, 7, 16,
 	USE_FIXED_PIN_FOR_PAIRING, 123456,
 	BONDING);
-	if (ret == BLE_STATUS_SUCCESS)
-	{
+	if (ret == BLE_STATUS_SUCCESS) {
 		DEBUG_LINE("BLE Stack Initialized.\n");
 	}
 
 	DEBUG_LINE("SERVER: BLE Stack Initialized\n");
 
+	/* Instantiate Accelerometer Service */
 	ret = Add_Acc_Service();
+	if (ret == BLE_STATUS_SUCCESS)
+		DEBUG_LINE("Acc service added successfully.\n");
+	else
+		DEBUG_LINE("Error while adding Acc service.\n");
 
-	  if(ret == BLE_STATUS_SUCCESS)
-	    DEBUG_LINE("Acc service added successfully.\n");
-	  else
-	    DEBUG_LINE("Error while adding Acc service.\n");
-	  ret = Add_Environmental_Sensor_Service();
+	/* Instantiate Environmental Service */
+	ret = Add_Environmental_Sensor_Service();
+	if (ret == BLE_STATUS_SUCCESS)
+		DEBUG_LINE("Environmental Sensor service added successfully.\n");
+	else
+		DEBUG_LINE("Error while adding Environmental Sensor service.\n");
 
-	    if(ret == BLE_STATUS_SUCCESS)
-	      DEBUG_LINE("Environmental Sensor service added successfully.\n");
-	    else
-	      DEBUG_LINE("Error while adding Environmental Sensor service.\n");
-
-	    /* Instantiate LED Button Service with one characteristic:
-	   	     * - LED characteristic (Readable and Writable)
-	   	     */
-	   	    ret = Add_LED_Service();
-
-	   	    if(ret == BLE_STATUS_SUCCESS)
-	   	      DEBUG_LINE("LED service added successfully.\n");
-	   	    else
-	   	      DEBUG_LINE("Error while adding LED service.\n");
-
-	  #if NEW_SERVICES
-	    /* Instantiate Timer Service with two characteristics:
-	     * - seconds characteristic (Readable only)
-	     * - minutes characteristics (Readable and Notifiable )
-	     */
-	    ret = Add_Time_Service();
-
-	    if(ret == BLE_STATUS_SUCCESS)
-	      DEBUG_LINE("Time service added successfully.\n");
-	    else
-	      DEBUG_LINE("Error while adding Time service.\n");
-
-
-	  #endif
+	/* Instantiate LED Service */
+	ret = Add_LED_Service();
+	if (ret == BLE_STATUS_SUCCESS)
+		DEBUG_LINE("LED service added successfully.\n");
+	else
+		DEBUG_LINE("Error while adding LED service.\n");
 
 	/* Set output power level */
 	ret = aci_hal_set_tx_power_level(1, 4);
@@ -179,9 +157,6 @@ void BLE_Common_Process(void)
 {
 	HCI_Process();
 	User_Process(&axes_data);
-	#if NEW_SERVICES
-	    Update_Time_Characteristics();
-	#endif
 }
 
 void BLE_Common_Set_Discoverable(void)
@@ -234,49 +209,46 @@ void GAP_DisconnectionComplete_CB(void)
 
 void Read_Request_CB(uint16_t handle)
 {
-  if(handle == accCharHandle + 1){
-	  Mems_StartReadSensors(100,ACCELEROMETER_SENSOR);
-	  (&axes_data)->AXIS_X = acc_xn;
-	  (&axes_data)->AXIS_Y = acc_yn;
-	  (&axes_data)->AXIS_Z = acc_zn;
-	  DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", (&axes_data)->AXIS_X, (&axes_data)->AXIS_Y, (&axes_data)->AXIS_Z);
-    Acc_Update((AxesRaw_t*)&axes_data);
-  }
-  else if(handle == tempCharHandle + 1){
-	Mems_StartReadSensors(100,TEMPERATURE_SENSOR);
-	DEBUG_LINE("Temperature : %d.%02d C",(int)temp1n, (int)temp2n);
-	int temp1 = (int)temp1n;
-	int temp2 = (int)temp2n;
-    int16_t data;
-    data = (int16_t)(temp1*100+temp2);
-    //Acc_Update((AxesRaw_t*)&axes_data); //FIXME: to overcome issue on Android App
-                                        // If the user button is not pressed within
-                                        // a short time after the connection,
-                                        // a pop-up reports a "No valid characteristics found" error.
-    Temp_Update(data);
-  }
-  else if(handle == pressCharHandle + 1){
-	Mems_StartReadSensors(100,PRESSURE_SENSOR);
-	DEBUG_LINE("Pression : %d.%02d hPa", (int) press1n, (int) press2n);
-	int press1 = (int)press1n;
-	int press2 = (int)press2n;
-    int32_t data;
-    data = (int32_t)(press1*100+press2);
-    Press_Update(data);
-  }
-  else if(handle == humidityCharHandle + 1){
-	Mems_StartReadSensors(100,HUMIDITY_SENSOR);
-	DEBUG_LINE("HUM: %d.%02d", (int ) hum1n, (int ) hum2n);
-	int hum1 = (int)hum1n;
-	int hum2 = (int)hum2n;
-	uint16_t data;
-    data = (uint16_t)(hum1*100+hum2);
-    Humidity_Update(data);
-  }
+	if (handle == accCharHandle + 1) {
+		Mems_StartReadSensors(100, ACCELEROMETER_SENSOR);
+		(&axes_data)->AXIS_X = acc_xn;
+		(&axes_data)->AXIS_Y = acc_yn;
+		(&axes_data)->AXIS_Z = acc_zn;
+		DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", (&axes_data)->AXIS_X,
+				(&axes_data)->AXIS_Y, (&axes_data)->AXIS_Z);
+		Acc_Update((AxesRaw_t*) &axes_data);
+	} else if (handle == tempCharHandle + 1) {
+		Mems_StartReadSensors(100, TEMPERATURE_SENSOR);
+		DEBUG_LINE("Temperature : %d.%02d C", (int )temp1n, (int )temp2n);
+		int temp1 = (int) temp1n;
+		int temp2 = (int) temp2n;
+		int16_t data;
+		data = (int16_t) (temp1 * 100 + temp2);
+		Temp_Update(data);
+	} else if (handle == pressCharHandle + 1) {
+		Mems_StartReadSensors(100, PRESSURE_SENSOR);
+		DEBUG_LINE("Pression : %d.%02d hPa", (int ) press1n, (int ) press2n);
+		int press1 = (int) press1n;
+		int press2 = (int) press2n;
+		int32_t data;
+		data = (int32_t) (press1 * 100 + press2);
+		Press_Update(data);
+	} else if (handle == humidityCharHandle + 1) {
+		Mems_StartReadSensors(100, HUMIDITY_SENSOR);
+		DEBUG_LINE("HUM: %d.%02d", (int ) hum1n, (int ) hum2n);
+		int hum1 = (int) hum1n;
+		int hum2 = (int) hum2n;
+		uint16_t data;
+		data = (uint16_t) (hum1 * 100 + hum2);
+		Humidity_Update(data);
+	} else if (handle == ledButtonCharHandle + 1) {
+		DEBUG_LINE("LA LED EST LUE");
+		Led_Update(ledState);
+	}
 
-  //EXIT:
-  if(connection_handle != 0)
-    aci_gatt_allow_read(connection_handle);
+	//EXIT:
+	if (connection_handle != 0)
+		aci_gatt_allow_read(connection_handle);
 }
 
 void Write_Request_CB(uint16_t handle, uint8_t *data, uint16_t length)
@@ -360,7 +332,9 @@ void HCI_Event_CB(void *pckt)
 	}
 }
 
-//NOUVELLES FONCTIONS
+/////////////////////////////////////////////////////////////////////
+/////////////////////////SERVICES////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 tBleStatus Add_Acc_Service(void)
 {
   tBleStatus ret;
@@ -380,7 +354,7 @@ tBleStatus Add_Acc_Service(void)
 
   COPY_ACC_UUID(uuid);
   ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 6,
-                           CHAR_PROP_NOTIFY|CHAR_PROP_READ,
+		  CHAR_PROP_READ|CHAR_PROP_NOTIFY,
                            ATTR_PERMISSION_NONE,
                            GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
                            16, 0, &accCharHandle);
@@ -393,119 +367,6 @@ fail:
   PRINTF("Error while adding ACC service.\n");
   return BLE_STATUS_ERROR ;
 
-}
-
-void User_Process(AxesRaw_t* p_axes)
-{
-  if(set_connectable){
-	  BLE_Common_Set_Discoverable();
-    set_connectable = FALSE;
-  }
-
-  /* Check if the user has pushed the button */
-  if(BSP_PB_GetState(BUTTON_KEY) == RESET)
- {
-    while (BSP_PB_GetState(BUTTON_KEY) == RESET);
-
-    //BSP_LED_Toggle(LED2); //used for debugging (BSP_LED_Init() above must be also enabled)
-
-    if(connected)
-    {
-      /* Update acceleration data */
-      Mems_StartReadSensors(100,ACCELEROMETER_SENSOR);
-      //DEBUG_LINE("ACC_X: %d, ACC_Y: %d, ACC_Z: %d\n", (int ) acc_xn, (int ) acc_yn,
-    				//(int ) acc_zn);
-      p_axes->AXIS_X = acc_xn;
-      p_axes->AXIS_Y = acc_yn;
-      p_axes->AXIS_Z = acc_zn;
-      DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", p_axes->AXIS_X, p_axes->AXIS_Y, p_axes->AXIS_Z);
-      Acc_Update(p_axes);
-    }
-  }
-}
-
-tBleStatus Acc_Update(AxesRaw_t *data)
-{
-  tBleStatus ret;
-  uint8_t buff[6];
-
-  STORE_LE_16(buff,data->AXIS_X);
-  STORE_LE_16(buff+2,data->AXIS_Y);
-  STORE_LE_16(buff+4,data->AXIS_Z);
-
-  ret = aci_gatt_update_char_value(accServHandle, accCharHandle, 0, 6, buff);
-
-  if (ret != BLE_STATUS_SUCCESS){
-    PRINTF("Error while updating ACC characteristic.\n") ;
-    return BLE_STATUS_ERROR ;
-  }
-  return BLE_STATUS_SUCCESS;
-}
-
-void Update_Time_Characteristics(void) {
-  /* update "seconds and minutes characteristics" of time service */
-  Seconds_Update();
-  Minutes_Notify();
-}
-
-tBleStatus Seconds_Update(void)
-{
-  uint32_t val;
-  tBleStatus ret;
-
-  /* Obtain system tick value in milliseconds, and convert it to seconds. */
-  val = HAL_GetTick();
-  val = val/1000;
-
-  /* create a time[] array to pass as last argument of aci_gatt_update_char_value() API*/
-  const uint8_t time[4] = {(val >> 24)&0xFF, (val >> 16)&0xFF, (val >> 8)&0xFF, (val)&0xFF};
-  /*
-   * Update value of "Seconds characteristic" using aci_gatt_update_char_value() API
-   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
-   * API description
-   */
-  ret = aci_gatt_update_char_value(timeServHandle, secondsCharHandle, 0, 4,
-                                   time);
-
-  if (ret != BLE_STATUS_SUCCESS){
-    PRINTF("Error while updating TIME characteristic.\n") ;
-    return BLE_STATUS_ERROR ;
-  }
-  return BLE_STATUS_SUCCESS;
-}
-
-tBleStatus Minutes_Notify(void)
-{
-  uint32_t val;
-  uint32_t minuteValue;
-  tBleStatus ret;
-
-  /* Obtain system tick value in milliseconds */
-  val = HAL_GetTick();
-
-  /* update "Minutes characteristic" value iff it has changed w.r.t. previous
-   * "minute" value.
-   */
-  if((minuteValue=val/(60*1000))!=previousMinuteValue) {
-    /* memorize this "minute" value for future usage */
-    previousMinuteValue = minuteValue;
-
-    /* create a time[] array to pass as last argument of aci_gatt_update_char_value() API*/
-    const uint8_t time[4] = {(minuteValue >> 24)&0xFF, (minuteValue >> 16)&0xFF, (minuteValue >> 8)&0xFF, (minuteValue)&0xFF};
-
-  /*
-   * Update value of "Minutes characteristic" using aci_gatt_update_char_value() API
-   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
-   * API description
-   */
-    ret = aci_gatt_update_char_value(timeServHandle, minuteCharHandle, 0, 4,
-                                     time);
-    if (ret != BLE_STATUS_SUCCESS){
-      PRINTF("Error while updating TIME characteristic.\n") ;
-      return BLE_STATUS_ERROR ;
-    }
-  }
-  return BLE_STATUS_SUCCESS;
 }
 
 tBleStatus Add_Environmental_Sensor_Service(void)
@@ -628,8 +489,6 @@ fail:
 tBleStatus Add_LED_Service(void)
 {
 
-#define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0xaf,0xce,0xb8,0xe0,0x03,0x77,0x11,0xe0,0xa5,0xc2,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-#define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0xa4,0xc3,0xff,0xc1,0xaa,0x17,0x11,0xe0,0x5a,0xba,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
   tBleStatus ret;
   uint8_t uuid[16];
 
@@ -638,8 +497,6 @@ tBleStatus Add_LED_Service(void)
   /*
    * now add "LED service" to GATT server, service handle is returned
    * via 'ledServHandle' parameter of aci_gatt_add_serv() API.
-   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
-   * API description
   */
   ret = aci_gatt_add_serv(UUID_TYPE_128, uuid, PRIMARY_SERVICE, 7,
                           &ledServHandle);
@@ -651,11 +508,9 @@ tBleStatus Add_LED_Service(void)
    * now add "LED button characteristic" to LED service, characteristic handle
    * is returned via 'ledButtonCharHandle' parameter of aci_gatt_add_char() API.
    * This characteristic is writable, as specified by 'CHAR_PROP_WRITE' parameter.
-   * Please refer to 'BlueNRG Application Command Interface.pdf' for detailed
-   * API description
   */
-  ret =  aci_gatt_add_char(ledServHandle, UUID_TYPE_128, uuid, 4,
-                           CHAR_PROP_WRITE | CHAR_PROP_READ, ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE,
+  ret =  aci_gatt_add_char(ledServHandle, UUID_TYPE_128, uuid, 1,
+		  CHAR_PROP_READ|CHAR_PROP_WRITE, ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE|GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
                            16, 1, &ledButtonCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
@@ -667,14 +522,54 @@ fail:
   return BLE_STATUS_ERROR;
 }
 
-void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data)
+tBleStatus Add_Count_Service(void)
 {
-  /* If GATT client has modified 'LED button characteristic' value, toggle LED2 */
-  if(handle == ledButtonCharHandle + 1){
-      BSP_LED_Toggle(LED2);
-  }
+  tBleStatus ret;
+
+  uint8_t uuid[16];
+
+  COPY_COUNT_SERVICE_UUID(uuid);
+  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
+                          &countServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  COPY_COUNT_UUID(uuid);
+  ret =  aci_gatt_add_char(countServHandle, UUID_TYPE_128, uuid, 2,
+                           CHAR_PROP_NOTIFY|CHAR_PROP_READ,
+                           ATTR_PERMISSION_NONE,
+                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                           16, 0, &accCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  PRINTF("Service COUNT added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Count Charac handle: 0x%04X\n",countServHandle, freeFallCharHandle, countCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding COUNT service.\n");
+  return BLE_STATUS_ERROR ;
+
 }
-// TEMP, PRESS, HUMIDITY UPDATE
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////UPDATE//////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+tBleStatus Acc_Update(AxesRaw_t *data)
+{
+  tBleStatus ret;
+  uint8_t buff[6];
+
+  STORE_LE_16(buff,data->AXIS_X);
+  STORE_LE_16(buff+2,data->AXIS_Y);
+  STORE_LE_16(buff+4,data->AXIS_Z);
+
+  ret = aci_gatt_update_char_value(accServHandle, accCharHandle, 0, 6, buff);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating ACC characteristic.\n") ;
+    return BLE_STATUS_ERROR ;
+  }
+  return BLE_STATUS_SUCCESS;
+}
+
 tBleStatus Temp_Update(int16_t temp)
 {
   tBleStatus ret;
@@ -730,31 +625,59 @@ tBleStatus Humidity_Update(uint16_t humidity)
 
 }
 
-tBleStatus Add_Count_Service(void)
+void Led_Update(uint8_t led)
 {
   tBleStatus ret;
 
-  uint8_t uuid[16];
+  ret = aci_gatt_update_char_value(ledServHandle, ledButtonCharHandle, 0, 1,
+                                   led);
 
-  COPY_COUNT_SERVICE_UUID(uuid);
-  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
-                          &countServHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating Led characteristic.\n") ;
 
-  COPY_COUNT_UUID(uuid);
-  ret =  aci_gatt_add_char(countServHandle, UUID_TYPE_128, uuid, 2,
-                           CHAR_PROP_NOTIFY|CHAR_PROP_READ,
-                           ATTR_PERMISSION_NONE,
-                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                           16, 0, &accCharHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  PRINTF("Service COUNT added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Count Charac handle: 0x%04X\n",countServHandle, freeFallCharHandle, countCharHandle);
-  return BLE_STATUS_SUCCESS;
-
-fail:
-  PRINTF("Error while adding COUNT service.\n");
-  return BLE_STATUS_ERROR ;
+  }
 
 }
 
+void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data)
+{
+  /* Writing a value on this characteristic changes the state of the LED (on or off) */
+  if(handle == ledButtonCharHandle + 1){
+      BSP_LED_Toggle(LED2);
+      DEBUG_LINE("LA LED EST MODIFIE");
+      if(ledState == 0) ledState = 1;
+      else ledState = 0;
+  }
+}
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////OTHER FUNCTIONS/////////////////////////////
+/////////////////////////////////////////////////////////////////////
+void User_Process(AxesRaw_t* p_axes)
+{
+  if(set_connectable){
+	  BLE_Common_Set_Discoverable();
+    set_connectable = FALSE;
+  }
+
+  /* Check if the user has pushed the button */
+  if(BSP_PB_GetState(BUTTON_KEY) == RESET)
+ {
+    while (BSP_PB_GetState(BUTTON_KEY) == RESET);
+
+    //BSP_LED_Toggle(LED2); //used for debugging (BSP_LED_Init() above must be also enabled)
+
+    if(connected)
+    {
+      /* Update acceleration data */
+      Mems_StartReadSensors(100,ACCELEROMETER_SENSOR);
+      //DEBUG_LINE("ACC_X: %d, ACC_Y: %d, ACC_Z: %d\n", (int ) acc_xn, (int ) acc_yn,
+    				//(int ) acc_zn);
+      p_axes->AXIS_X = acc_xn;
+      p_axes->AXIS_Y = acc_yn;
+      p_axes->AXIS_Z = acc_zn;
+      DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", p_axes->AXIS_X, p_axes->AXIS_Y, p_axes->AXIS_Z);
+      Acc_Update(p_axes);
+    }
+  }
+}
