@@ -233,6 +233,12 @@ void GAP_DisconnectionComplete_CB(void)
 void Read_Request_CB(uint16_t handle)
 {
   if(handle == accCharHandle + 1){
+	  Mems_StartReadSensors(100,ACCELEROMETER_SENSOR);
+
+	  (&axes_data)->AXIS_X = acc_xn;
+	  (&axes_data)->AXIS_Y = acc_yn;
+	  (&axes_data)->AXIS_Z = acc_zn;
+	  DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", (&axes_data)->AXIS_X, (&axes_data)->AXIS_Y, (&axes_data)->AXIS_Z);
     Acc_Update((AxesRaw_t*)&axes_data);
   }
   else if(handle == tempCharHandle + 1){
@@ -242,7 +248,7 @@ void Read_Request_CB(uint16_t handle)
 	int temp2 = (int)temp2n;
     int16_t data;
     data = (int16_t)(temp1*100+temp2);
-    Acc_Update((AxesRaw_t*)&axes_data); //FIXME: to overcome issue on Android App
+    //Acc_Update((AxesRaw_t*)&axes_data); //FIXME: to overcome issue on Android App
                                         // If the user button is not pressed within
                                         // a short time after the connection,
                                         // a pop-up reports a "No valid characteristics found" error.
@@ -397,7 +403,7 @@ void User_Process(AxesRaw_t* p_axes)
 
   /* Check if the user has pushed the button */
   if(BSP_PB_GetState(BUTTON_KEY) == RESET)
-  {
+ {
     while (BSP_PB_GetState(BUTTON_KEY) == RESET);
 
     //BSP_LED_Toggle(LED2); //used for debugging (BSP_LED_Init() above must be also enabled)
@@ -406,12 +412,12 @@ void User_Process(AxesRaw_t* p_axes)
     {
       /* Update acceleration data */
       Mems_StartReadSensors(100,ACCELEROMETER_SENSOR);
-      DEBUG_LINE("ACC_X: %d, ACC_Y: %d, ACC_Z: %d\n", (int ) acc_xn, (int ) acc_yn,
-    				(int ) acc_zn);
+      //DEBUG_LINE("ACC_X: %d, ACC_Y: %d, ACC_Z: %d\n", (int ) acc_xn, (int ) acc_yn,
+    				//(int ) acc_zn);
       p_axes->AXIS_X = acc_xn;
       p_axes->AXIS_Y = acc_yn;
       p_axes->AXIS_Z = acc_zn;
-      //DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", p_axes->AXIS_X, p_axes->AXIS_Y, p_axes->AXIS_Z);
+      DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", p_axes->AXIS_X, p_axes->AXIS_Y, p_axes->AXIS_Z);
       Acc_Update(p_axes);
     }
   }
