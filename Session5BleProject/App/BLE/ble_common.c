@@ -10,8 +10,7 @@ do {\
             uuid_struct[8] = uuid_8; uuid_struct[9] = uuid_9; uuid_struct[10] = uuid_10; uuid_struct[11] = uuid_11; \
                 uuid_struct[12] = uuid_12; uuid_struct[13] = uuid_13; uuid_struct[14] = uuid_14; uuid_struct[15] = uuid_15; \
 }while(0)
-//#if NEW_SERVICES
-  //#define COPY_ACC_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x01,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+
   #define COPY_ACC_SERVICE_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0x02,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
   #define COPY_ACC_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x34,0x0a,0x1b,0x80, 0xcf,0x4b, 0x11,0xe1, 0xac,0x36, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
@@ -22,29 +21,20 @@ do {\
 
   // Time service: uuid = 0x08, 0x36, 0x6e, 0x80, 0xcf, 0x3a, 0x11, 0xe1, 0x9a, 0xb4, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b
   //      straight uuid = 0x08366e80cf3a11e19ab40002a5d5c51b
-  #define COPY_TIME_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x08,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  /*#define COPY_TIME_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x08,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
   #define COPY_TIME_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x09,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
   #define COPY_MINUTE_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0x0a,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-
-  #define COPY_COUNT_SERVICE_UUID(uuid_struct) COPY_UUID_128(uuid_struct,0xc6,0x09,0xb3,0xc3,0x09,0xf8,0x11,0xe7,0x53,0x9a,0x00,0x02,0xa5,0xd5,0xc5,0x1b);
-  #define COPY_COUNT_UUID(uuid_struct) 		   COPY_UUID_128(uuid_struct,0x9a,0xb6,0x73,0x9c,0x00,0x65,0x11,0xe7,0x11,0xd7,0x00,0x02,0xa5,0xd5,0xc5,0x1b);
+*/
+  #define COPY_COUNT_SERVICE_UUID(uuid_struct) COPY_UUID_128(uuid_struct,0xc6,0x09,0xb3,0xc3,0x09,0xf8,0x11,0xe7,0x53,0x9a,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_COUNT_UUID(uuid_struct) 		   COPY_UUID_128(uuid_struct,0x9a,0xb6,0x73,0x9c,0x00,0x65,0x11,0xe7,0x11,0xd7,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
   #define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0xaf,0xce,0xb8,0xe0,0x03,0x77,0x11,0xe0,0xa5,0xc2,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
   #define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0xa4,0xc3,0xff,0xc1,0xaa,0x17,0x11,0xe0,0x5a,0xba,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
-// LED service
-  //#define COPY_LED_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x0b,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-  //#define COPY_LED_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x0c,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-/*#else
-  #define COPY_ACC_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x02,0x36,0x6e,0x80, 0xcf,0x3a, 0x11,0xe1, 0x9a,0xb4, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-  #define COPY_FREE_FALL_UUID(uuid_struct)    COPY_UUID_128(uuid_struct,0xe2,0x3e,0x78,0xa0, 0xcf,0x4a, 0x11,0xe1, 0x8f,0xfc, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-  #define COPY_ACC_UUID(uuid_struct)          COPY_UUID_128(uuid_struct,0x34,0x0a,0x1b,0x80, 0xcf,0x4b, 0x11,0xe1, 0xac,0x36, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_MOTION_SERVICE_UUID(uuid_struct) COPY_UUID_128(uuid_struct,0xac,0x59,0xaf,0x24,0x78,0x19,0x11,0xe3,0x9c,0x62,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_INC_UUID(uuid_struct) 		COPY_UUID_128(uuid_struct,0x53,0xfc,0xb3,0x92,0x10,0x29,0x11,0xe3,0x63,0x90,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
+  #define COPY_UPDOWN_UUID(uuid_struct) 	COPY_UUID_128(uuid_struct,0xfb,0x35,0x09,0x7d,0x67,0x23,0x11,0xe3,0xf4,0x56,0x00,0x02,0xa5,0xd5,0xc5,0x1b)
 
-  #define COPY_ENV_SENS_SERVICE_UUID(uuid_struct)  COPY_UUID_128(uuid_struct,0x42,0x82,0x1a,0x40, 0xe4,0x77, 0x11,0xe2, 0x82,0xd0, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-  #define COPY_TEMP_CHAR_UUID(uuid_struct)         COPY_UUID_128(uuid_struct,0xa3,0x2e,0x55,0x20, 0xe4,0x77, 0x11,0xe2, 0xa9,0xe3, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-  #define COPY_PRESS_CHAR_UUID(uuid_struct)        COPY_UUID_128(uuid_struct,0xcd,0x20,0xc4,0x80, 0xe4,0x8b, 0x11,0xe2, 0x84,0x0b, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-  #define COPY_HUMIDITY_CHAR_UUID(uuid_struct)     COPY_UUID_128(uuid_struct,0x01,0xc5,0x0b,0x60, 0xe4,0x8c, 0x11,0xe2, 0xa0,0x73, 0x00,0x02,0xa5,0xd5,0xc5,0x1b)
-#endif
 /* Store Value into a buffer in Little Endian Format */
 #define STORE_LE_16(buf, val)    ( ((buf)[0] =  (uint8_t) (val)    ) , \
                                    ((buf)[1] =  (uint8_t) (val>>8) ) )
@@ -59,9 +49,226 @@ uint16_t accServHandle, freeFallCharHandle, accCharHandle;
 uint16_t envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle;
 uint16_t countServHandle, countCharHandle;
 uint16_t ledServHandle, ledButtonCharHandle;
+uint16_t motionServHandle, incCharHandle, updownCharHandle;
 uint8_t ledState = 0;
 tClockTime notifyTime = 0;
 int countAv = 0;
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////SERVICES////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+tBleStatus Add_Acc_Service(void)
+{
+  tBleStatus ret;
+
+  uint8_t uuid[16];
+
+  COPY_ACC_SERVICE_UUID(uuid);
+  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
+                          &accServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  COPY_ACC_UUID(uuid);
+  ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 6,
+		  CHAR_PROP_READ|CHAR_PROP_NOTIFY,
+                           ATTR_PERMISSION_NONE,
+                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                           16, 0, &accCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  PRINTF("Service ACC added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Acc Charac handle: 0x%04X\n",accServHandle, freeFallCharHandle, accCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding ACC service.\n");
+  return BLE_STATUS_ERROR ;
+
+}
+
+tBleStatus Add_Environmental_Sensor_Service(void)
+{
+  tBleStatus ret;
+  uint8_t uuid[16];
+  uint16_t uuid16;
+  charactFormat charFormat;
+  uint16_t descHandle;
+
+  COPY_ENV_SENS_SERVICE_UUID(uuid);
+  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 10,
+                          &envSensServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  /* Temperature Characteristic */
+  COPY_TEMP_CHAR_UUID(uuid);
+  ret =  aci_gatt_add_char(envSensServHandle, UUID_TYPE_128, uuid, 2,
+                           CHAR_PROP_READ, ATTR_PERMISSION_NONE,
+                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                           16, 0, &tempCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  charFormat.format = FORMAT_SINT16;
+  charFormat.exp = -1;
+  charFormat.unit = UNIT_TEMP_CELSIUS;
+  charFormat.name_space = 0;
+  charFormat.desc = 0;
+
+  uuid16 = CHAR_FORMAT_DESC_UUID;
+
+  ret = aci_gatt_add_char_desc(envSensServHandle,
+                               tempCharHandle,
+                               UUID_TYPE_16,
+                               (uint8_t *)&uuid16,
+                               7,
+                               7,
+                               (void *)&charFormat,
+                               ATTR_PERMISSION_NONE,
+                               ATTR_ACCESS_READ_ONLY,
+                               0,
+                               16,
+                               FALSE,
+                               &descHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  /* Pressure Characteristic */
+  if(1){ //FIXME
+    COPY_PRESS_CHAR_UUID(uuid);
+    ret =  aci_gatt_add_char(envSensServHandle, UUID_TYPE_128, uuid, 3,
+                             CHAR_PROP_READ, ATTR_PERMISSION_NONE,
+                             GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                             16, 0, &pressCharHandle);
+    if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+    charFormat.format = FORMAT_SINT24;
+    charFormat.exp = -5;
+    charFormat.unit = UNIT_PRESSURE_BAR;
+    charFormat.name_space = 0;
+    charFormat.desc = 0;
+
+    uuid16 = CHAR_FORMAT_DESC_UUID;
+
+    ret = aci_gatt_add_char_desc(envSensServHandle,
+                                 pressCharHandle,
+                                 UUID_TYPE_16,
+                                 (uint8_t *)&uuid16,
+                                 7,
+                                 7,
+                                 (void *)&charFormat,
+                                 ATTR_PERMISSION_NONE,
+                                 ATTR_ACCESS_READ_ONLY,
+                                 0,
+                                 16,
+                                 FALSE,
+                                 &descHandle);
+    if (ret != BLE_STATUS_SUCCESS) goto fail;
+  }
+  /* Humidity Characteristic */
+  if(1){   //FIXME
+    COPY_HUMIDITY_CHAR_UUID(uuid);
+    ret =  aci_gatt_add_char(envSensServHandle, UUID_TYPE_128, uuid, 2,
+                             CHAR_PROP_READ, ATTR_PERMISSION_NONE,
+                             GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                             16, 0, &humidityCharHandle);
+    if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+    charFormat.format = FORMAT_UINT16;
+    charFormat.exp = -1;
+    charFormat.unit = UNIT_UNITLESS;
+    charFormat.name_space = 0;
+    charFormat.desc = 0;
+
+    uuid16 = CHAR_FORMAT_DESC_UUID;
+
+    ret = aci_gatt_add_char_desc(envSensServHandle,
+                                 humidityCharHandle,
+                                 UUID_TYPE_16,
+                                 (uint8_t *)&uuid16,
+                                 7,
+                                 7,
+                                 (void *)&charFormat,
+                                 ATTR_PERMISSION_NONE,
+                                 ATTR_ACCESS_READ_ONLY,
+                                 0,
+                                 16,
+                                 FALSE,
+                                 &descHandle);
+    if (ret != BLE_STATUS_SUCCESS) goto fail;
+  }
+  PRINTF("Service ENV_SENS added. Handle 0x%04X, TEMP Charac handle: 0x%04X, PRESS Charac handle: 0x%04X, HUMID Charac handle: 0x%04X\n",envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding ENV_SENS service.\n");
+  return BLE_STATUS_ERROR ;
+
+}
+
+tBleStatus Add_LED_Service(void)
+{
+
+  tBleStatus ret;
+  uint8_t uuid[16];
+
+  /* copy "LED service UUID" defined above to 'uuid' local variable */
+  COPY_LED_SERVICE_UUID(uuid);
+  /*
+   * now add "LED service" to GATT server, service handle is returned
+   * via 'ledServHandle' parameter of aci_gatt_add_serv() API.
+  */
+  ret = aci_gatt_add_serv(UUID_TYPE_128, uuid, PRIMARY_SERVICE, 7,
+                          &ledServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  /* copy "LED button characteristic UUID" defined above to 'uuid' local variable */
+  COPY_LED_UUID(uuid);
+  /*
+   * now add "LED button characteristic" to LED service, characteristic handle
+   * is returned via 'ledButtonCharHandle' parameter of aci_gatt_add_char() API.
+   * This characteristic is writable, as specified by 'CHAR_PROP_WRITE' parameter.
+  */
+  ret =  aci_gatt_add_char(ledServHandle, UUID_TYPE_128, uuid, 1,
+		  CHAR_PROP_READ|CHAR_PROP_WRITE, ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE|GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                           16, 0, &ledButtonCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  PRINTF("Service LED BUTTON added. Handle 0x%04X, LED button Charac handle: 0x%04X\n",ledServHandle, ledButtonCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding LED service.\n");
+  return BLE_STATUS_ERROR;
+}
+
+tBleStatus Add_Motion_Service(void)
+{
+
+  tBleStatus ret;
+  uint8_t uuid[16];
+
+  COPY_MOTION_SERVICE_UUID(uuid);
+
+  ret = aci_gatt_add_serv(UUID_TYPE_128, uuid, PRIMARY_SERVICE, 7,
+                          &motionServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  COPY_INC_UUID(uuid);
+  ret =  aci_gatt_add_char(motionServHandle, UUID_TYPE_128, uuid, 4,
+		  CHAR_PROP_READ|CHAR_PROP_NOTIFY, ATTR_PERMISSION_NONE, GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                           16, 0, &incCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  COPY_UPDOWN_UUID(uuid);
+   ret =  aci_gatt_add_char(motionServHandle, UUID_TYPE_128, uuid, 1,
+		   CHAR_PROP_NOTIFY, ATTR_PERMISSION_NONE, GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                            16, 0, &updownCharHandle);
+   if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  PRINTF("Service MOTION added. Handle 0x%04X, inclinaison Charac handle: 0x%04X\n, updown Charac handle: 0x%04X\n",motionServHandle, incCharHandle, updownCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding MOTION service.\n");
+  return BLE_STATUS_ERROR;
+}
 
 tBleStatus Add_Count_Service(void)
 {
@@ -82,7 +289,7 @@ tBleStatus Add_Count_Service(void)
                            16, 0, &countCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
-  PRINTF("Service COUNT added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Count Charac handle: 0x%04X\n",countServHandle, freeFallCharHandle, countCharHandle);
+  PRINTF("Service COUNT added. Handle 0x%04X, Count Charac handle: 0x%04X\n",countServHandle, countCharHandle);
   return BLE_STATUS_SUCCESS;
 
 fail:
@@ -90,7 +297,9 @@ fail:
   return BLE_STATUS_ERROR ;
 
 }
-
+////////////////////////////////////////////////////////////////////
+///////////////////////BLE FUNCTIONS////////////////////////////////
+////////////////////////////////////////////////////////////////////
 void BLE_Common_Init(void)
 {
 	const char *name = "Team2";
@@ -182,9 +391,16 @@ void BLE_Common_Init(void)
 	/* Instantiate Count Service */
 		ret = Add_Count_Service();
 		if (ret == BLE_STATUS_SUCCESS)
-			DEBUG_LINE("COUNT service added successfully.\n");
-		else
-			DEBUG_LINE("Error while adding Count service.\n");
+		DEBUG_LINE("COUNT service added successfully.\n");
+	else
+		DEBUG_LINE("Error while adding Count service.\n");
+
+	/* Instantiate Motion Service */
+	ret = Add_Motion_Service();
+	if (ret == BLE_STATUS_SUCCESS)
+		DEBUG_LINE("MOTION service added successfully.\n");
+	else
+		DEBUG_LINE("Error while adding Motion service.\n");
 
 	/* Set output power level */
 	ret = aci_hal_set_tx_power_level(1, 4);
@@ -371,190 +587,6 @@ void HCI_Event_CB(void *pckt)
 	}
 		break;
 	}
-}
-
-/////////////////////////////////////////////////////////////////////
-/////////////////////////SERVICES////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-tBleStatus Add_Acc_Service(void)
-{
-  tBleStatus ret;
-
-  uint8_t uuid[16];
-
-  COPY_ACC_SERVICE_UUID(uuid);
-  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
-                          &accServHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  COPY_ACC_UUID(uuid);
-  ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 6,
-		  CHAR_PROP_READ|CHAR_PROP_NOTIFY,
-                           ATTR_PERMISSION_NONE,
-                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                           16, 0, &accCharHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  PRINTF("Service ACC added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Acc Charac handle: 0x%04X\n",accServHandle, freeFallCharHandle, accCharHandle);
-  return BLE_STATUS_SUCCESS;
-
-fail:
-  PRINTF("Error while adding ACC service.\n");
-  return BLE_STATUS_ERROR ;
-
-}
-
-tBleStatus Add_Environmental_Sensor_Service(void)
-{
-  tBleStatus ret;
-  uint8_t uuid[16];
-  uint16_t uuid16;
-  charactFormat charFormat;
-  uint16_t descHandle;
-
-  COPY_ENV_SENS_SERVICE_UUID(uuid);
-  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 10,
-                          &envSensServHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  /* Temperature Characteristic */
-  COPY_TEMP_CHAR_UUID(uuid);
-  ret =  aci_gatt_add_char(envSensServHandle, UUID_TYPE_128, uuid, 2,
-                           CHAR_PROP_READ, ATTR_PERMISSION_NONE,
-                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                           16, 0, &tempCharHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  charFormat.format = FORMAT_SINT16;
-  charFormat.exp = -1;
-  charFormat.unit = UNIT_TEMP_CELSIUS;
-  charFormat.name_space = 0;
-  charFormat.desc = 0;
-
-  uuid16 = CHAR_FORMAT_DESC_UUID;
-
-  ret = aci_gatt_add_char_desc(envSensServHandle,
-                               tempCharHandle,
-                               UUID_TYPE_16,
-                               (uint8_t *)&uuid16,
-                               7,
-                               7,
-                               (void *)&charFormat,
-                               ATTR_PERMISSION_NONE,
-                               ATTR_ACCESS_READ_ONLY,
-                               0,
-                               16,
-                               FALSE,
-                               &descHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  /* Pressure Characteristic */
-  if(1){ //FIXME
-    COPY_PRESS_CHAR_UUID(uuid);
-    ret =  aci_gatt_add_char(envSensServHandle, UUID_TYPE_128, uuid, 3,
-                             CHAR_PROP_READ, ATTR_PERMISSION_NONE,
-                             GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                             16, 0, &pressCharHandle);
-    if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-    charFormat.format = FORMAT_SINT24;
-    charFormat.exp = -5;
-    charFormat.unit = UNIT_PRESSURE_BAR;
-    charFormat.name_space = 0;
-    charFormat.desc = 0;
-
-    uuid16 = CHAR_FORMAT_DESC_UUID;
-
-    ret = aci_gatt_add_char_desc(envSensServHandle,
-                                 pressCharHandle,
-                                 UUID_TYPE_16,
-                                 (uint8_t *)&uuid16,
-                                 7,
-                                 7,
-                                 (void *)&charFormat,
-                                 ATTR_PERMISSION_NONE,
-                                 ATTR_ACCESS_READ_ONLY,
-                                 0,
-                                 16,
-                                 FALSE,
-                                 &descHandle);
-    if (ret != BLE_STATUS_SUCCESS) goto fail;
-  }
-  /* Humidity Characteristic */
-  if(1){   //FIXME
-    COPY_HUMIDITY_CHAR_UUID(uuid);
-    ret =  aci_gatt_add_char(envSensServHandle, UUID_TYPE_128, uuid, 2,
-                             CHAR_PROP_READ, ATTR_PERMISSION_NONE,
-                             GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                             16, 0, &humidityCharHandle);
-    if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-    charFormat.format = FORMAT_UINT16;
-    charFormat.exp = -1;
-    charFormat.unit = UNIT_UNITLESS;
-    charFormat.name_space = 0;
-    charFormat.desc = 0;
-
-    uuid16 = CHAR_FORMAT_DESC_UUID;
-
-    ret = aci_gatt_add_char_desc(envSensServHandle,
-                                 humidityCharHandle,
-                                 UUID_TYPE_16,
-                                 (uint8_t *)&uuid16,
-                                 7,
-                                 7,
-                                 (void *)&charFormat,
-                                 ATTR_PERMISSION_NONE,
-                                 ATTR_ACCESS_READ_ONLY,
-                                 0,
-                                 16,
-                                 FALSE,
-                                 &descHandle);
-    if (ret != BLE_STATUS_SUCCESS) goto fail;
-  }
-  PRINTF("Service ENV_SENS added. Handle 0x%04X, TEMP Charac handle: 0x%04X, PRESS Charac handle: 0x%04X, HUMID Charac handle: 0x%04X\n",envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle);
-  return BLE_STATUS_SUCCESS;
-
-fail:
-  PRINTF("Error while adding ENV_SENS service.\n");
-  return BLE_STATUS_ERROR ;
-
-}
-
-tBleStatus Add_LED_Service(void)
-{
-
-  tBleStatus ret;
-  uint8_t uuid[16];
-
-  /* copy "LED service UUID" defined above to 'uuid' local variable */
-  COPY_LED_SERVICE_UUID(uuid);
-  /*
-   * now add "LED service" to GATT server, service handle is returned
-   * via 'ledServHandle' parameter of aci_gatt_add_serv() API.
-  */
-  ret = aci_gatt_add_serv(UUID_TYPE_128, uuid, PRIMARY_SERVICE, 7,
-                          &ledServHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  /* copy "LED button characteristic UUID" defined above to 'uuid' local variable */
-  COPY_LED_UUID(uuid);
-  /*
-   * now add "LED button characteristic" to LED service, characteristic handle
-   * is returned via 'ledButtonCharHandle' parameter of aci_gatt_add_char() API.
-   * This characteristic is writable, as specified by 'CHAR_PROP_WRITE' parameter.
-  */
-  ret =  aci_gatt_add_char(ledServHandle, UUID_TYPE_128, uuid, 1,
-		  CHAR_PROP_READ|CHAR_PROP_WRITE, ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE|GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                           16, 0, &ledButtonCharHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  PRINTF("Service LED BUTTON added. Handle 0x%04X, LED button Charac handle: 0x%04X\n",ledServHandle, ledButtonCharHandle);
-  return BLE_STATUS_SUCCESS;
-
-fail:
-  PRINTF("Error while adding LED service.\n");
-  return BLE_STATUS_ERROR;
 }
 
 
