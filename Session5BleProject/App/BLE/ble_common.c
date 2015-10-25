@@ -45,13 +45,14 @@ volatile uint8_t set_connectable = 1;
 volatile uint16_t connection_handle = 0;
 AxesRaw_t axes_data;
 uint16_t sampleServHandle, TXCharHandle, RXCharHandle;
-uint16_t accServHandle, freeFallCharHandle, accCharHandle;
+uint16_t accServHandle, accCharHandle;
 uint16_t envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle;
 uint16_t countServHandle, countCharHandle;
 uint16_t ledServHandle, ledButtonCharHandle;
 uint16_t motionServHandle, incCharHandle, updownCharHandle;
 uint8_t ledState = 0;
 tClockTime notifyTime = 0;
+tClockTime notifyMotion = 0;
 int countAv = 0;
 
 /////////////////////////////////////////////////////////////////////
@@ -76,7 +77,7 @@ tBleStatus Add_Acc_Service(void)
                            16, 0, &accCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
-  PRINTF("Service ACC added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Acc Charac handle: 0x%04X\n",accServHandle, freeFallCharHandle, accCharHandle);
+  PRINTF("Service ACC added. Handle 0x%04X, Acc Charac handle: 0x%04X\n",accServHandle, accCharHandle);
   return BLE_STATUS_SUCCESS;
 
 fail:
@@ -440,6 +441,8 @@ void GAP_ConnectionComplete_CB(uint8_t addr[6], uint16_t handle)
 {
 	connected = TRUE;
 	connection_handle = handle;
+	/* réinitialisation nb de fois appui bouton */
+	count = 0;
 
 	DEBUG_LINE("Connected to device:");
 	for (int i = 5; i > 0; i--)
@@ -501,6 +504,30 @@ void Read_Request_CB(uint16_t handle)
 	}else if (handle == countCharHandle + 1){
 		DEBUG_LINE("Read Count : %d",(int)count);
 		Count_Update(count);
+	}else if(handle == incCharHandle + 1){
+		//byte 1 : left/right axis inclination side (none: 0, left: 1 , right: 2)
+		//byte 2 : left/right axis inclination degree (none: 0, medium: 1 , high: 2)
+		//byte 3 : back/front axis inclination side (none: 0, back: 1 , front: 2)
+		//byte 4 : back/front axis inclination degree (none: 0, medium: 1 , high: 2)
+		uint32_t inc;
+		Mems_StartReadSensors(100, ACCELEROMETER_SENSOR);
+		if(fabs(acc_yn)<167) inc = 0;
+		else if(fabs(acc_yn-333)<167 || fabs(acc_yn+333)<167) inc = 1;
+		else inc = 2;
+		inc = inc<<8;
+		if(fabs(acc_yn)<167) inc = inc + 0;
+		else if(acc_yn>167) inc = inc + 1;
+		else inc = inc + 2;
+		inc = inc<<8;
+		if(fabs(acc_xn)<167) inc = inc + 0;
+		else if(fabs(acc_xn-333)<167 || fabs(acc_xn+333)<167) inc = inc + 1;
+		else inc = inc + 2;
+		inc = inc<<8;
+		if(fabs(acc_xn)<167) inc = inc + 0;
+		else if(acc_xn>167) inc = inc + 1;
+		else inc = inc + 2;
+		DEBUG_LINE("Read Motion : %d", inc);
+		Inc_Update(inc);
 	}
 
 	//EXIT:
@@ -671,7 +698,7 @@ void Led_Update(uint8_t led)
   tBleStatus ret;
 
   ret = aci_gatt_update_char_value(ledServHandle, ledButtonCharHandle, 0, 1,
-                                   led);
+                                   (uint8_t*)&led);
 
   if (ret != BLE_STATUS_SUCCESS){
     PRINTF("Error while updating Led characteristic.\n") ;
@@ -705,6 +732,20 @@ void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_da
   }
 }
 
+void Inc_Update(uint32_t inc)
+{
+  tBleStatus ret;
+
+  ret = aci_gatt_update_char_value(motionServHandle, incCharHandle, 0, 4,
+                                   (uint8_t*)&inc);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating Inclination characteristic.\n") ;
+
+  }
+
+}
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////OTHER FUNCTIONS/////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -722,5 +763,42 @@ void Notify_Process(AxesRaw_t* p_axes) {
 		countAv = count;
 		DEBUG_LINE("Notify Count : %d",count);
 		Count_Update(count);
+	}
+	if (connected && (int) (Clock_Time() - notifyMotion) > 500) {
+		notifyMotion = Clock_Time();
+		//byte 1 : left/right axis inclination side (none: 0, left: 1 , right: 2)
+		//byte 2 : left/right axis inclination degree (none: 0, medium: 1 , high: 2)
+		//byte 3 : back/front axis inclination side (none: 0, back: 1 , front: 2)
+		//byte 4 : back/front axis inclination degree (none: 0, medium: 1 , high: 2)
+		uint32_t inc;
+		Mems_StartReadSensors(500, ACCELEROMETER_SENSOR);
+		if (fabs(acc_yn) < 167)
+			inc = 0;
+		else if (fabs(acc_yn - 333) < 167 || fabs(acc_yn + 333) < 167)
+			inc = 1;
+		else
+			inc = 2;
+		inc = inc << 8;
+		if (fabs(acc_yn) < 167)
+			inc = inc + 0;
+		else if (acc_yn > 167)
+			inc = inc + 1;
+		else
+			inc = inc + 2;
+		inc = inc << 8;
+		if (fabs(acc_xn) < 167)
+			inc = inc + 0;
+		else if (fabs(acc_xn - 333) < 167 || fabs(acc_xn + 333) < 167)
+			inc = inc + 1;
+		else
+			inc = inc + 2;
+		inc = inc << 8;
+		if (fabs(acc_xn) < 167)
+			inc = inc + 0;
+		else if (acc_xn > 167)
+			inc = inc + 1;
+		else
+			inc = inc + 2;
+		Inc_Update(inc);
 	}
 }

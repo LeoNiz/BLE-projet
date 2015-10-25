@@ -50,14 +50,14 @@ typedef struct {
   i32_t AXIS_Y;
   i32_t AXIS_Z;
 } AxesRaw_t;
-// nouvelles datas
+
+/* nouvelles datas */
 int32_t acc_xn, acc_yn, acc_zn;
 int32_t gyr_xn, gyr_yn, gyr_zn;
 int32_t mag_xn, mag_yn, mag_zn;
 int32_t press1n, press2n;
 int32_t hum1n, hum2n;
 int32_t temp1n, temp2n;
-
 uint16_t count;
 
 
@@ -72,19 +72,26 @@ void HCI_Event_CB(void *pckt);
 void Write_Request_CB(uint16_t handle, uint8_t *data, uint16_t length);
 void Read_Request_CB(uint16_t handle);
 
+/* ADD services */
 tBleStatus Add_Acc_Service(void);
-void User_Process(AxesRaw_t* p_axes);
-tBleStatus Acc_Update(AxesRaw_t *data);
-void Update_Time_Characteristics(void);
-tBleStatus Seconds_Update(void);
-tBleStatus Minutes_Notify(void);
 tBleStatus Add_Environmental_Sensor_Service(void);
 tBleStatus Add_LED_Service(void);
-void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data);
+tBleStatus Add_Motion_Service(void);
+tBleStatus Add_Count_Service(void);
+
+/* Update */
+tBleStatus Acc_Update(AxesRaw_t *data);
 tBleStatus Temp_Update(int16_t temp);
 tBleStatus Press_Update(int32_t press);
 tBleStatus Humidity_Update(uint16_t humidity);
-void Read_Request_CB(uint16_t handle);
+void Led_Update(uint8_t led);
+void Count_Update(uint16_t count);
+void Inc_Update(uint32_t inc);
 
+/* Modify */
+void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data);
+
+/* Notify */
+void Notify_Process(AxesRaw_t* p_axes);
 
 #endif //BLE_COMMON_H_
