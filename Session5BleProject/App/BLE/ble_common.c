@@ -774,21 +774,12 @@ void Notify_Process(AxesRaw_t* p_axes) {
 		p_axes->AXIS_Y = acc_yn;
 		p_axes->AXIS_Z = acc_zn;
 		Acc_Update(p_axes);
-	}
 
-	if(connected && countAv<count){
-		countAv = count;
-		DEBUG_LINE("Notify Count : %d",count);
-		Count_Update(count);
-	}
-	if (connected && (int) (Clock_Time() - notifyMotion) > 500) {
-		notifyMotion = Clock_Time();
 		//byte 1 : left/right axis inclination side (none: 0, left: 1 , right: 2)
 		//byte 2 : left/right axis inclination degree (none: 0, medium: 1 , high: 2)
 		//byte 3 : back/front axis inclination side (none: 0, back: 1 , front: 2)
 		//byte 4 : back/front axis inclination degree (none: 0, medium: 1 , high: 2)
 		uint32_t inc;
-		Mems_StartReadSensors(500, ACCELEROMETER_SENSOR);
 		if (fabs(acc_yn) < 167)
 			inc = 0;
 		else if (fabs(acc_yn - 333) < 167 || fabs(acc_yn + 333) < 167)
@@ -817,22 +808,24 @@ void Notify_Process(AxesRaw_t* p_axes) {
 		else
 			inc = inc + 2;
 		Inc_Update(inc);
-	}
-	if (connected && (int) (Clock_Time() - notifyUpdown) > 500) {
-		notifyUpdown = Clock_Time();
-		Mems_StartReadSensors(500, GYROSCOPE_SENSOR);
+
 		uint8_t updown;
 		// print UP when you move the board up rapidly
-		if (gyr_xn > 70000) {
+		if (acc_zn > 1200) {
 			updown = 1;
 			//Motion_MoveUp_CB();
 		}
 		// print DOWN when you move the board down rapidly
-		else if (gyr_xn < -50000) {
-			updown = 0;
+		else updown = 0;
 			//Motion_MoveDown_CB();
-		}
 		Updown_Update(updown);
 	}
+
+	if(connected && countAv<count){
+		countAv = count;
+		DEBUG_LINE("Notify Count : %d",count);
+		Count_Update(count);
+	}
+
 
 }

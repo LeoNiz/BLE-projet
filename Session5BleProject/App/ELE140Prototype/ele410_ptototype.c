@@ -66,8 +66,8 @@ void Mems_Acc_CB(int32_t acc_x, int32_t acc_y, int32_t acc_z) {
 }
 
 void Mems_Gyr_CB(int32_t gyr_x, int32_t gyr_y, int32_t gyr_z) {
-	DEBUG_LINE("GYR_X: %d, GYR_Y: %d, GYR_Z: %d\n", (int ) gyr_x, (int ) gyr_y,
-			(int ) gyr_z);
+	//DEBUG_LINE("GYR_X: %d, GYR_Y: %d, GYR_Z: %d\n", (int ) gyr_x, (int ) gyr_y,
+			//(int ) gyr_z);
 	gyr_xn = gyr_x;
 	gyr_yn = gyr_y;
 	gyr_zn = gyr_z;
