@@ -61,6 +61,7 @@ uint16_t countServHandle, countCharHandle;
 uint16_t ledServHandle, ledButtonCharHandle;
 uint8_t ledState = 0;
 tClockTime notifyTime = 0;
+int countAv = 0;
 
 tBleStatus Add_Count_Service(void)
 {
@@ -78,7 +79,7 @@ tBleStatus Add_Count_Service(void)
                            CHAR_PROP_NOTIFY|CHAR_PROP_READ,
                            ATTR_PERMISSION_NONE,
                            GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                           16, 0, &accCharHandle);
+                           16, 0, &countCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
   PRINTF("Service COUNT added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Count Charac handle: 0x%04X\n",countServHandle, freeFallCharHandle, countCharHandle);
@@ -178,12 +179,12 @@ void BLE_Common_Init(void)
 	else
 		DEBUG_LINE("Error while adding LED service.\n");
 
-	/* Instantiate Count Service
+	/* Instantiate Count Service */
 		ret = Add_Count_Service();
 		if (ret == BLE_STATUS_SUCCESS)
-			DEBUG_LINE("LED service added successfully.\n");
+			DEBUG_LINE("COUNT service added successfully.\n");
 		else
-			DEBUG_LINE("Error while adding Count service.\n");*/
+			DEBUG_LINE("Error while adding Count service.\n");
 
 	/* Set output power level */
 	ret = aci_hal_set_tx_power_level(1, 4);
@@ -281,10 +282,10 @@ void Read_Request_CB(uint16_t handle)
 		if(ledState==0) DEBUG_LINE("Read Led : %d => 0xFF", (int)ledState);
 		else DEBUG_LINE("Read Led : %d => 0x7F", (int)ledState);
 		Led_Update(ledState);
-	}//else if (handle == countCharHandle + 1){
-		//DEBUG_LINE("Count : %d",(int)count);
-		//Count_Update(count);
-	//}
+	}else if (handle == countCharHandle + 1){
+		DEBUG_LINE("Read Count : %d",(int)count);
+		Count_Update(count);
+	}
 
 	//EXIT:
 	if (connection_handle != 0)
@@ -683,5 +684,11 @@ void Notify_Process(AxesRaw_t* p_axes) {
 		p_axes->AXIS_Y = acc_yn;
 		p_axes->AXIS_Z = acc_zn;
 		Acc_Update(p_axes);
+	}
+
+	if(connected && countAv<count){
+		countAv = count;
+		DEBUG_LINE("Notify Count : %d",count);
+		Count_Update(count);
 	}
 }
