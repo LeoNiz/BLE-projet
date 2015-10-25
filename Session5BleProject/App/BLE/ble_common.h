@@ -58,6 +58,8 @@ int32_t press1n, press2n;
 int32_t hum1n, hum2n;
 int32_t temp1n, temp2n;
 
+uint16_t count;
+
 
 //FONCTIONS
 void BLE_Common_Init(void);

@@ -61,6 +61,34 @@ uint16_t countServHandle, countCharHandle;
 uint16_t ledServHandle, ledButtonCharHandle;
 uint8_t ledState = 0;
 
+tBleStatus Add_Count_Service(void)
+{
+  tBleStatus ret;
+
+  uint8_t uuid[16];
+
+  COPY_COUNT_SERVICE_UUID(uuid);
+  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
+                          &countServHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  COPY_COUNT_UUID(uuid);
+  ret =  aci_gatt_add_char(countServHandle, UUID_TYPE_128, uuid, 2,
+                           CHAR_PROP_NOTIFY|CHAR_PROP_READ,
+                           ATTR_PERMISSION_NONE,
+                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
+                           16, 0, &accCharHandle);
+  if (ret != BLE_STATUS_SUCCESS) goto fail;
+
+  PRINTF("Service COUNT added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Count Charac handle: 0x%04X\n",countServHandle, freeFallCharHandle, countCharHandle);
+  return BLE_STATUS_SUCCESS;
+
+fail:
+  PRINTF("Error while adding COUNT service.\n");
+  return BLE_STATUS_ERROR ;
+
+}
+
 void BLE_Common_Init(void)
 {
 	const char *name = "Team2";
@@ -149,6 +177,13 @@ void BLE_Common_Init(void)
 	else
 		DEBUG_LINE("Error while adding LED service.\n");
 
+	/* Instantiate Count Service
+		ret = Add_Count_Service();
+		if (ret == BLE_STATUS_SUCCESS)
+			DEBUG_LINE("LED service added successfully.\n");
+		else
+			DEBUG_LINE("Error while adding Count service.\n");*/
+
 	/* Set output power level */
 	ret = aci_hal_set_tx_power_level(1, 4);
 }
@@ -156,7 +191,7 @@ void BLE_Common_Init(void)
 void BLE_Common_Process(void)
 {
 	HCI_Process();
-	User_Process(&axes_data);
+	//User_Process(&axes_data);
 }
 
 void BLE_Common_Set_Discoverable(void)
@@ -242,9 +277,13 @@ void Read_Request_CB(uint16_t handle)
 		data = (uint16_t) (hum1 * 100 + hum2);
 		Humidity_Update(data);
 	} else if (handle == ledButtonCharHandle + 1) {
-		DEBUG_LINE("LA LED EST LUE");
+		if(ledState==0) DEBUG_LINE("Read Led : %d => 0xFF", (int)ledState);
+		else DEBUG_LINE("Read Led : %d => 0x7F", (int)ledState);
 		Led_Update(ledState);
-	}
+	}//else if (handle == countCharHandle + 1){
+		//DEBUG_LINE("Count : %d",(int)count);
+		//Count_Update(count);
+	//}
 
 	//EXIT:
 	if (connection_handle != 0)
@@ -254,6 +293,7 @@ void Read_Request_CB(uint16_t handle)
 void Write_Request_CB(uint16_t handle, uint8_t *data, uint16_t length)
 {
 	//This Callback is called when a GATT Client wants to write an attribute
+	DEBUG_LINE("Write test");
 }
 
 /**
@@ -321,7 +361,6 @@ void HCI_Event_CB(void *pckt)
 		 /* this callback is invoked when a GATT attribute is modified
 		  extract callback data and pass to suitable handler function */
 		  evt_gatt_attr_modified *evt = (evt_gatt_attr_modified*)blue_evt->data;
-
 		  Attribute_Modified_CB(evt->attr_handle, evt->data_length, evt->att_data);
 		 }
 		 //STOP
@@ -345,12 +384,6 @@ tBleStatus Add_Acc_Service(void)
   ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
                           &accServHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  /*COPY_FREE_FALL_UUID(uuid);
-  ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 1,
-                           CHAR_PROP_NOTIFY, ATTR_PERMISSION_NONE, 0,
-                           16, 0, &freeFallCharHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;*/
 
   COPY_ACC_UUID(uuid);
   ret =  aci_gatt_add_char(accServHandle, UUID_TYPE_128, uuid, 6,
@@ -511,7 +544,7 @@ tBleStatus Add_LED_Service(void)
   */
   ret =  aci_gatt_add_char(ledServHandle, UUID_TYPE_128, uuid, 1,
 		  CHAR_PROP_READ|CHAR_PROP_WRITE, ATTR_PERMISSION_NONE, GATT_NOTIFY_ATTRIBUTE_WRITE|GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                           16, 1, &ledButtonCharHandle);
+                           16, 0, &ledButtonCharHandle);
   if (ret != BLE_STATUS_SUCCESS) goto fail;
 
   PRINTF("Service LED BUTTON added. Handle 0x%04X, LED button Charac handle: 0x%04X\n",ledServHandle, ledButtonCharHandle);
@@ -522,33 +555,7 @@ fail:
   return BLE_STATUS_ERROR;
 }
 
-tBleStatus Add_Count_Service(void)
-{
-  tBleStatus ret;
 
-  uint8_t uuid[16];
-
-  COPY_COUNT_SERVICE_UUID(uuid);
-  ret = aci_gatt_add_serv(UUID_TYPE_128,  uuid, PRIMARY_SERVICE, 7,
-                          &countServHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  COPY_COUNT_UUID(uuid);
-  ret =  aci_gatt_add_char(countServHandle, UUID_TYPE_128, uuid, 2,
-                           CHAR_PROP_NOTIFY|CHAR_PROP_READ,
-                           ATTR_PERMISSION_NONE,
-                           GATT_NOTIFY_READ_REQ_AND_WAIT_FOR_APPL_RESP,
-                           16, 0, &accCharHandle);
-  if (ret != BLE_STATUS_SUCCESS) goto fail;
-
-  PRINTF("Service COUNT added. Handle 0x%04X, Free fall Charac handle: 0x%04X, Count Charac handle: 0x%04X\n",countServHandle, freeFallCharHandle, countCharHandle);
-  return BLE_STATUS_SUCCESS;
-
-fail:
-  PRINTF("Error while adding COUNT service.\n");
-  return BLE_STATUS_ERROR ;
-
-}
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////UPDATE//////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -639,12 +646,26 @@ void Led_Update(uint8_t led)
 
 }
 
+void Count_Update(uint16_t count)
+{
+  tBleStatus ret;
+
+  ret = aci_gatt_update_char_value(countServHandle, countCharHandle, 0, 2,
+                                   (uint8_t*)&count);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating Count characteristic.\n") ;
+
+  }
+
+}
+
 void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data)
 {
   /* Writing a value on this characteristic changes the state of the LED (on or off) */
   if(handle == ledButtonCharHandle + 1){
       BSP_LED_Toggle(LED2);
-      DEBUG_LINE("LA LED EST MODIFIE");
+      DEBUG_LINE("Led Toggle");
       if(ledState == 0) ledState = 1;
       else ledState = 0;
   }
