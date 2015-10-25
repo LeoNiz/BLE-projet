@@ -53,6 +53,7 @@ uint16_t motionServHandle, incCharHandle, updownCharHandle;
 uint8_t ledState = 0;
 tClockTime notifyTime = 0;
 tClockTime notifyMotion = 0;
+tClockTime notifyUpdown = 0;
 int countAv = 0;
 
 /////////////////////////////////////////////////////////////////////
@@ -746,6 +747,22 @@ void Inc_Update(uint32_t inc)
 
 }
 
+
+void Updown_Update(uint8_t updown)
+{
+  tBleStatus ret;
+
+  ret = aci_gatt_update_char_value(motionServHandle, updownCharHandle, 0, 1,
+                                   (uint8_t*)&updown);
+
+  if (ret != BLE_STATUS_SUCCESS){
+    PRINTF("Error while updating Up Down characteristic.\n") ;
+
+  }
+
+}
+
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////OTHER FUNCTIONS/////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -801,4 +818,21 @@ void Notify_Process(AxesRaw_t* p_axes) {
 			inc = inc + 2;
 		Inc_Update(inc);
 	}
+	if (connected && (int) (Clock_Time() - notifyUpdown) > 500) {
+		notifyUpdown = Clock_Time();
+		Mems_StartReadSensors(500, GYROSCOPE_SENSOR);
+		uint8_t updown;
+		// print UP when you move the board up rapidly
+		if (gyr_xn > 70000) {
+			updown = 1;
+			//Motion_MoveUp_CB();
+		}
+		// print DOWN when you move the board down rapidly
+		else if (gyr_xn < -50000) {
+			updown = 0;
+			//Motion_MoveDown_CB();
+		}
+		Updown_Update(updown);
+	}
+
 }

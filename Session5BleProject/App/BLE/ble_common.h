@@ -87,6 +87,7 @@ tBleStatus Humidity_Update(uint16_t humidity);
 void Led_Update(uint8_t led);
 void Count_Update(uint16_t count);
 void Inc_Update(uint32_t inc);
+void Updown_Update(uint8_t updown);
 
 /* Modify */
 void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_data);
