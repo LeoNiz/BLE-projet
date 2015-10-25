@@ -5,7 +5,7 @@
 #include "ble_common.h"
 
 static tClockTime time;
-static bleActive;
+int bleActive;
 const int DELAY = 120000;
 
 void ELE410_Prototype_Init(void)
@@ -20,6 +20,20 @@ void ELE410_Prototype_Process(void)
 	Disable_BLE();
 }
 
+///////////////////////////////////////////////////////////////
+////////////////////////CONNEXION BLE//////////////////////////
+///////////////////////////////////////////////////////////////
+void Disable_BLE(void)
+{
+	int tempsEcoulee = (int) Clock_Time()-time;
+	/*Si le BLE est activé et que le délai de connexion est expiré,
+	 * la découverte est désactivé*/
+	if(bleActive==1 && tempsEcoulee>DELAY){
+		DEBUG_LINE("J'ESPERE QUE VOUS ETES DEJA CONNECTE");
+		aci_gap_set_non_discoverable();
+		bleActive = 0;
+		}
+}
 
 ///////////////////////////////////////////////////////////////
 ////////////////////////BUTTON/////////////////////////////////
@@ -39,18 +53,9 @@ void Button_Button_Long_Pressed_CB(void)
 	DEBUG_LINE("VOUS AVEZ %d s POUR VOUS CONNECTER", (int) DELAY/1000);
 }
 
-void Disable_BLE(void)
-{
-	int tempsEcoulee = (int) Clock_Time()-time;
-	/*Si le BLE est activé et que le délai de connexion est expiré,
-	 * la découverte est désactivé*/
-	if(bleActive==1 && tempsEcoulee>DELAY){
-		DEBUG_LINE("J'ESPERE QUE VOUS ETES DEJA CONNECTE");
-		aci_gap_set_non_discoverable();
-		bleActive = 0;
-		}
-}
-
+///////////////////////////////////////////////////////////////
+///////////////////////REDEFINITION MEMS///////////////////////
+///////////////////////////////////////////////////////////////
 //Les fonctions mems recuperent les datas qui sont reinjectees dans les datas du ble_common.h
 void Mems_Acc_CB(int32_t acc_x, int32_t acc_y, int32_t acc_z) {
 	//DEBUG_LINE("ACC_X: %d, ACC_Y: %d, ACC_Z: %d\n", (int ) acc_x, (int ) acc_y,

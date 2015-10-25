@@ -50,7 +50,7 @@ do {\
                                    ((buf)[1] =  (uint8_t) (val>>8) ) )
 
 /* Private variables ---------------------------------------------------------*/
-volatile int connected = FALSE;
+int connected = FALSE;
 volatile uint8_t set_connectable = 1;
 volatile uint16_t connection_handle = 0;
 AxesRaw_t axes_data;
@@ -60,6 +60,7 @@ uint16_t envSensServHandle, tempCharHandle, pressCharHandle, humidityCharHandle;
 uint16_t countServHandle, countCharHandle;
 uint16_t ledServHandle, ledButtonCharHandle;
 uint8_t ledState = 0;
+tClockTime notifyTime = 0;
 
 tBleStatus Add_Count_Service(void)
 {
@@ -191,7 +192,7 @@ void BLE_Common_Init(void)
 void BLE_Common_Process(void)
 {
 	HCI_Process();
-	//User_Process(&axes_data);
+	Notify_Process(&axes_data);
 }
 
 void BLE_Common_Set_Discoverable(void)
@@ -674,31 +675,13 @@ void Attribute_Modified_CB(uint16_t handle, uint8_t data_length, uint8_t *att_da
 /////////////////////////////////////////////////////////////////////
 /////////////////////////OTHER FUNCTIONS/////////////////////////////
 /////////////////////////////////////////////////////////////////////
-void User_Process(AxesRaw_t* p_axes)
-{
-  if(set_connectable){
-	  BLE_Common_Set_Discoverable();
-    set_connectable = FALSE;
-  }
-
-  /* Check if the user has pushed the button */
-  if(BSP_PB_GetState(BUTTON_KEY) == RESET)
- {
-    while (BSP_PB_GetState(BUTTON_KEY) == RESET);
-
-    //BSP_LED_Toggle(LED2); //used for debugging (BSP_LED_Init() above must be also enabled)
-
-    if(connected)
-    {
-      /* Update acceleration data */
-      Mems_StartReadSensors(100,ACCELEROMETER_SENSOR);
-      //DEBUG_LINE("ACC_X: %d, ACC_Y: %d, ACC_Z: %d\n", (int ) acc_xn, (int ) acc_yn,
-    				//(int ) acc_zn);
-      p_axes->AXIS_X = acc_xn;
-      p_axes->AXIS_Y = acc_yn;
-      p_axes->AXIS_Z = acc_zn;
-      DEBUG_LINE("ACC: X=%6d Y=%6d Z=%6d\r\n", p_axes->AXIS_X, p_axes->AXIS_Y, p_axes->AXIS_Z);
-      Acc_Update(p_axes);
-    }
-  }
+void Notify_Process(AxesRaw_t* p_axes) {
+	if (connected && (int) (Clock_Time() - notifyTime) > 500) {
+		notifyTime = Clock_Time();
+		Mems_StartReadSensors(500, ACCELEROMETER_SENSOR);
+		p_axes->AXIS_X = acc_xn;
+		p_axes->AXIS_Y = acc_yn;
+		p_axes->AXIS_Z = acc_zn;
+		Acc_Update(p_axes);
+	}
 }
